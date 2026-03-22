@@ -1,0 +1,196 @@
+{
+  "artCraft": [
+    {
+      "label": "表演",
+      "base": 5
+    },
+    {
+      "label": "美术",
+      "base": 5
+    },
+    {
+      "label": "摄影",
+      "base": 5
+    },
+    {
+      "label": "伪造",
+      "base": 5
+    },
+    {
+      "label": "写作",
+      "base": 5
+    },
+    {
+      "label": "书法",
+      "base": 5
+    },
+    {
+      "label": "制陶",
+      "base": 5
+    },
+    {
+      "label": "厨艺",
+      "base": 5
+    },
+    {
+      "label": "雕塑",
+      "base": 5
+    },
+    {
+      "label": "理发",
+      "base": 5
+    },
+    {
+      "label": "建筑",
+      "base": 5
+    },
+    {
+      "label": "舞蹈",
+      "base": 5
+    },
+    {
+      "label": "莫里斯舞",
+      "base": 5
+    },
+    {
+      "label": "歌剧歌唱",
+      "base": 5
+    },
+    {
+      "label": "粉刷匠与油漆工",
+      "base": 5
+    },
+    {
+      "label": "吹制玻璃管",
+      "base": 5
+    }
+  ],
+  "science": [
+    {
+      "label": "地质学",
+      "base": 1
+    },
+    {
+      "label": "化学",
+      "base": 1
+    },
+    {
+      "label": "生物学",
+      "base": 1
+    },
+    {
+      "label": "数学",
+      "base": 1
+    },
+    {
+      "label": "天文学",
+      "base": 1
+    },
+    {
+      "label": "物理学",
+      "base": 1
+    },
+    {
+      "label": "药学",
+      "base": 1
+    },
+    {
+      "label": "植物学",
+      "base": 1
+    },
+    {
+      "label": "动物学",
+      "base": 1
+    },
+    {
+      "label": "密码学",
+      "base": 1
+    },
+    {
+      "label": "工程学",
+      "base": 1
+    },
+    {
+      "label": "气象学",
+      "base": 1
+    },
+    {
+      "label": "司法科学",
+      "base": 1
+    }
+  ],
+  "fightingBrawl": [
+    {
+      "label": "鞭",
+      "base": 5
+    },
+    {
+      "label": "链锯",
+      "base": 10
+    },
+    {
+      "label": "斗殴",
+      "base": 25
+    },
+    {
+      "label": "斧",
+      "base": 15
+    },
+    {
+      "label": "剑",
+      "base": 20
+    },
+    {
+      "label": "绞索",
+      "base": 15
+    },
+    {
+      "label": "连枷",
+      "base": 10
+    },
+    {
+      "label": "矛",
+      "base": 20
+    }
+  ],
+  "firearmsHandgun": [
+    {
+      "label": "步枪/霰弹枪",
+      "base": 25
+    },
+    {
+      "label": "冲锋枪",
+      "base": 15
+    },
+    {
+      "label": "弓",
+      "base": 15
+    },
+    {
+      "label": "喷射器",
+      "base": 10
+    },
+    {
+      "label": "机枪",
+      "base": 10
+    },
+    {
+      "label": "手枪",
+      "base": 20
+    },
+    {
+      "label": "重武器",
+      "base": 10
+    }
+  ],
+  "pilot": [
+    {
+      "label": "飞行器",
+      "base": 1
+    },
+    {
+      "label": "船",
+      "base": 1
+    }
+  ]
+}

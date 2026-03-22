@@ -1,0 +1,18 @@
+source: COC七版空白卡G3.5.11.5 (修订版).xlsx
+occupations_extracted: 229
+matrix_matched: 229
+specialization_categories: 5
+
+preview:
+#2 会计师 | EDU*4 | mandatory=6 | groups=无
+#3 杂技演员 | EDU*2+DEX*2 | mandatory=6 | groups=无
+#4 演员-戏剧演员 | EDU*2+APP*2 | mandatory=5 | groups=社交技能 4选2
+#5 演员-电影演员 | EDU*2+APP*2 | mandatory=4 | groups=社交技能 4选2
+#6 事务所侦探、保安 | EDU*2+MAX(STR,DEX)*2 | mandatory=7 | groups=社交技能 4选1
+#7 精神病医生（古典） | EDU*4 | mandatory=8 | groups=无
+#8 动物训练师 | EDU*2+MAX(APP,POW)*2 | mandatory=8 | groups=无
+#9 文物学家（原作向） | EDU*4 | mandatory=5 | groups=社交技能 4选1
+#10 古董商 | EDU*4 | mandatory=6 | groups=社交技能 4选2
+#11 考古学家（原作向） | EDU*4 | mandatory=6 | groups=分支可选技能 2选1
+#12 建筑师 | EDU*4 | mandatory=7 | groups=分支可选技能 2选1
+#13 艺术家 | EDU*2+MAX(DEX,POW)*2 | mandatory=4 | groups=社交技能 4选1 / 分支可选技能 2选1

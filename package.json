@@ -1,0 +1,42 @@
+{
+  "name": "dnd_pc_maker",
+  "version": "1.0.0",
+  "description": "这是一个纯前端离线可跑的《克苏鲁的呼唤 第七版》建卡工具。",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "sync:assets": "node ./tools/sync-public-assets.js",
+    "dev": "npm run sync:assets && vite",
+    "build": "npm run sync:assets && vite build",
+    "preview": "vite preview",
+    "extract:occupations": "node ./tools/extract-occupations.js",
+    "extract:weapons": "node ./tools/extract-weapons.js",
+    "extract:data": "npm run extract:occupations && npm run extract:weapons",
+    "extract:template-logic": "node ./tools/extract-template-logic.js",
+    "check:export": "node ./tools/check-export.js",
+    "cap:sync": "npm run build && npx cap sync",
+    "cap:add:android": "npx cap add android",
+    "cap:add:ios": "npx cap add ios",
+    "cap:open:android": "npx cap open android",
+    "cap:open:ios": "npx cap open ios"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@capacitor/android": "^8.2.0",
+    "@capacitor/cli": "^8.2.0",
+    "@capacitor/core": "^8.2.0",
+    "@capacitor/filesystem": "^8.1.2",
+    "@capacitor/ios": "^8.2.0",
+    "@capacitor/share": "^8.0.1",
+    "jszip": "^3.10.1",
+    "vue": "^3.4.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.0",
+    "typescript": "^5.9.3",
+    "vite": "^5.1.0"
+  }
+}

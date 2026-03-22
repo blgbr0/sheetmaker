@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.vite/
+*.log
+*.tmp
+*.temp
+*.zip
+coverage/
+android/app/build/
+android/.gradle/
+ios/App/build/
+ios/App/DerivedData/

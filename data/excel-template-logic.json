@@ -1,0 +1,886 @@
+{
+  "attrs": [
+    {
+      "name": "STR",
+      "input": "W3",
+      "half": "X3",
+      "fifth": "X4",
+      "source": "AS3",
+      "sourceHalf": "AT3",
+      "inputInfo": {
+        "addr": "W3",
+        "value": "",
+        "formula": ""
+      },
+      "halfInfo": {
+        "addr": "X3",
+        "value": "0",
+        "formula": ""
+      },
+      "fifthInfo": {
+        "addr": "X4",
+        "value": "0",
+        "formula": ""
+      },
+      "sourceInfo": {
+        "addr": "AS3",
+        "value": "0",
+        "formula": "IF(AD10=\"骰点模式\",IF(OFFSET(处理数据黏贴表!A23,AC10,0)=0,\"请从右侧粘贴数据\",OFFSET(处理数据黏贴表!A23,AC10,0)),W3)"
+      },
+      "sourceHalfInfo": {
+        "addr": "AT3",
+        "value": "0",
+        "formula": "INT(AS3/2)"
+      }
+    },
+    {
+      "name": "DEX",
+      "input": "Z3",
+      "half": "AA3",
+      "fifth": "AA4",
+      "source": "AV3",
+      "sourceHalf": "AW3",
+      "inputInfo": {
+        "addr": "Z3",
+        "value": "",
+        "formula": ""
+      },
+      "halfInfo": {
+        "addr": "AA3",
+        "value": "0",
+        "formula": ""
+      },
+      "fifthInfo": {
+        "addr": "AA4",
+        "value": "0",
+        "formula": ""
+      },
+      "sourceInfo": {
+        "addr": "AV3",
+        "value": "0",
+        "formula": "IF(AD10=\"骰点模式\",IF(OFFSET(处理数据黏贴表!A23,AC10,3)=0,\"请从右侧粘贴数据\",OFFSET(处理数据黏贴表!A23,AC10,3)),Z3)"
+      },
+      "sourceHalfInfo": {
+        "addr": "AW3",
+        "value": "0",
+        "formula": "INT(AV3/2)"
+      }
+    },
+    {
+      "name": "INT",
+      "input": "AC3",
+      "half": "AD3",
+      "fifth": "AD4",
+      "source": "AV7",
+      "sourceHalf": "AW7",
+      "inputInfo": {
+        "addr": "AC3",
+        "value": "",
+        "formula": ""
+      },
+      "halfInfo": {
+        "addr": "AD3",
+        "value": "0",
+        "formula": ""
+      },
+      "fifthInfo": {
+        "addr": "AD4",
+        "value": "0",
+        "formula": ""
+      },
+      "sourceInfo": {
+        "addr": "AV7",
+        "value": "0",
+        "formula": "IF(AD10=\"骰点模式\",IF(OFFSET(处理数据黏贴表!A23,AC10,5)=0,\"请从右侧粘贴数据\",OFFSET(处理数据黏贴表!A23,AC10,5)),AC3)"
+      },
+      "sourceHalfInfo": {
+        "addr": "AW7",
+        "value": "0",
+        "formula": "INT(AV7/2)"
+      }
+    },
+    {
+      "name": "CON",
+      "input": "W5",
+      "half": "X5",
+      "fifth": "X6",
+      "source": "AS5",
+      "sourceHalf": "AT5",
+      "inputInfo": {
+        "addr": "W5",
+        "value": "",
+        "formula": ""
+      },
+      "halfInfo": {
+        "addr": "X5",
+        "value": "0",
+        "formula": ""
+      },
+      "fifthInfo": {
+        "addr": "X6",
+        "value": "0",
+        "formula": ""
+      },
+      "sourceInfo": {
+        "addr": "AS5",
+        "value": "0",
+        "formula": "IF(AD10=\"骰点模式\",IF(OFFSET(处理数据黏贴表!A23,AC10,1)=0,\"请从右侧粘贴数据\",OFFSET(处理数据黏贴表!A23,AC10,1)),W5)"
+      },
+      "sourceHalfInfo": {
+        "addr": "AT5",
+        "value": "0",
+        "formula": "INT(AS5/2)"
+      }
+    },
+    {
+      "name": "APP",
+      "input": "Z5",
+      "half": "AA5",
+      "fifth": "AA6",
+      "source": "AV5",
+      "sourceHalf": "AW5",
+      "inputInfo": {
+        "addr": "Z5",
+        "value": "",
+        "formula": ""
+      },
+      "halfInfo": {
+        "addr": "AA5",
+        "value": "0",
+        "formula": ""
+      },
+      "fifthInfo": {
+        "addr": "AA6",
+        "value": "0",
+        "formula": ""
+      },
+      "sourceInfo": {
+        "addr": "AV5",
+        "value": "0",
+        "formula": "IF(AD10=\"骰点模式\",IF(OFFSET(处理数据黏贴表!A23,AC10,4)=0,\"请从右侧粘贴数据\",OFFSET(处理数据黏贴表!A23,AC10,4)),Z5)"
+      },
+      "sourceHalfInfo": {
+        "addr": "AW5",
+        "value": "0",
+        "formula": "INT(AV5/2)"
+      }
+    },
+    {
+      "name": "POW",
+      "input": "AC5",
+      "half": "AD5",
+      "fifth": "AD6",
+      "source": "AY3",
+      "sourceHalf": "AZ3",
+      "inputInfo": {
+        "addr": "AC5",
+        "value": "",
+        "formula": ""
+      },
+      "halfInfo": {
+        "addr": "AD5",
+        "value": "0",
+        "formula": ""
+      },
+      "fifthInfo": {
+        "addr": "AD6",
+        "value": "0",
+        "formula": ""
+      },
+      "sourceInfo": {
+        "addr": "AY3",
+        "value": "0",
+        "formula": "IF(AD10=\"骰点模式\",IF(OFFSET(处理数据黏贴表!A23,AC10,6)=0,\"请从右侧粘贴数据\",OFFSET(处理数据黏贴表!A23,AC10,6)),AC5)"
+      },
+      "sourceHalfInfo": {
+        "addr": "AZ3",
+        "value": "0",
+        "formula": "INT(AY3/2)"
+      }
+    },
+    {
+      "name": "SIZ",
+      "input": "W7",
+      "half": "X7",
+      "fifth": "X8",
+      "source": "AS7",
+      "sourceHalf": "AT7",
+      "inputInfo": {
+        "addr": "W7",
+        "value": "",
+        "formula": ""
+      },
+      "halfInfo": {
+        "addr": "X7",
+        "value": "0",
+        "formula": ""
+      },
+      "fifthInfo": {
+        "addr": "X8",
+        "value": "0",
+        "formula": ""
+      },
+      "sourceInfo": {
+        "addr": "AS7",
+        "value": "0",
+        "formula": "IF(AD10=\"骰点模式\",IF(OFFSET(处理数据黏贴表!A23,AC10,2)=0,\"请从右侧粘贴数据\",OFFSET(处理数据黏贴表!A23,AC10,2)),W7)"
+      },
+      "sourceHalfInfo": {
+        "addr": "AT7",
+        "value": "0",
+        "formula": "INT(AS7/2)"
+      }
+    },
+    {
+      "name": "EDU",
+      "input": "Z7",
+      "half": "AA7",
+      "fifth": "AA8",
+      "source": "AY5",
+      "sourceHalf": "AZ5",
+      "inputInfo": {
+        "addr": "Z7",
+        "value": "",
+        "formula": ""
+      },
+      "halfInfo": {
+        "addr": "AA7",
+        "value": "0",
+        "formula": ""
+      },
+      "fifthInfo": {
+        "addr": "AA8",
+        "value": "0",
+        "formula": ""
+      },
+      "sourceInfo": {
+        "addr": "AY5",
+        "value": "0",
+        "formula": "IF(AD10=\"骰点模式\",IF(OFFSET(处理数据黏贴表!A23,AC10,7)=0,\"请从右侧粘贴数据\",OFFSET(处理数据黏贴表!A23,AC10,7)),Z7)"
+      },
+      "sourceHalfInfo": {
+        "addr": "AZ5",
+        "value": "0",
+        "formula": "INT(AY5/2)"
+      }
+    },
+    {
+      "name": "Luck",
+      "input": "V10",
+      "half": "",
+      "fifth": "",
+      "source": "",
+      "sourceHalf": "",
+      "inputInfo": {
+        "addr": "V10",
+        "value": "0",
+        "formula": "T7-X11"
+      },
+      "halfInfo": null,
+      "fifthInfo": null,
+      "sourceInfo": null,
+      "sourceHalfInfo": null
+    }
+  ],
+  "derived": [
+    {
+      "addr": "X2",
+      "value": "",
+      "formula": "W3+W7+W5+Z3+Z5+AC3+AC5+Z7"
+    },
+    {
+      "addr": "AC2",
+      "value": "",
+      "formula": "AS3+AS5+AS7+AV3+AV5+AV7+AY3+AY5+V10"
+    },
+    {
+      "addr": "R7",
+      "value": "0",
+      "formula": "IF(T4=\"否\",R4-X2,R4-AC2)"
+    },
+    {
+      "addr": "AC7",
+      "value": "8",
+      "formula": "8-AD8"
+    },
+    {
+      "addr": "AY7",
+      "value": "8",
+      "formula": "AZ8+8"
+    },
+    {
+      "addr": "M10",
+      "value": "0",
+      "formula": "IF(N10<M11,N10,N10-O11)"
+    },
+    {
+      "addr": "N10",
+      "value": "/0 ",
+      "formula": "IF(H7=\"未启用\",INT((AS5+AS7)/10),INT((AS5+AS7)/5))"
+    },
+    {
+      "addr": "R10",
+      "value": "0",
+      "formula": "IF(AY3-T11>99-T27,S10,AY3-T11)"
+    },
+    {
+      "addr": "S10",
+      "value": "/99 ",
+      "formula": "99-T27"
+    },
+    {
+      "addr": "V10",
+      "value": "0",
+      "formula": "T7-X11"
+    },
+    {
+      "addr": "Z10",
+      "value": "0",
+      "formula": "AA10"
+    },
+    {
+      "addr": "AA10",
+      "value": "/0",
+      "formula": "INT(AY3/5)"
+    },
+    {
+      "addr": "T26",
+      "value": "0 ",
+      "formula": "SUM(P26:S26)"
+    },
+    {
+      "addr": "T29",
+      "value": "0 ",
+      "formula": "SUM(P29:S29)"
+    },
+    {
+      "addr": "AF52",
+      "value": "0",
+      "formula": "附表!Q10"
+    },
+    {
+      "addr": "AF55",
+      "value": "0",
+      "formula": "附表!Q8"
+    }
+  ],
+  "skills": [
+    {
+      "row": 16,
+      "cells": [
+        {
+          "addr": "L16",
+          "value": "",
+          "formula": "IF(ISTEXT(IFERROR(VLOOKUP(人物卡!M16,人物卡!G48:I52,1,FALSE),IFERROR(VLOOKUP(人物卡!M16,D48:F52,1,FALSE),0))),\"★\",INDEX(本职技能!$A$2:$HX$75,MATCH(人物卡!M16,本职技能!$A$2:$A$74,0),MATCH(人物卡!$P$5,本职技能!$A$1:$HX$1,0)))"
+        },
+        {
+          "addr": "P16",
+          "value": "5",
+          "formula": ""
+        },
+        {
+          "addr": "T16",
+          "value": "5 ",
+          "formula": "SUM(P16:S16)"
+        },
+        {
+          "addr": "U16",
+          "value": "2",
+          "formula": "INT(T16/2)"
+        },
+        {
+          "addr": "V16",
+          "value": "1",
+          "formula": "INT(T16/5)"
+        },
+        {
+          "addr": "X16",
+          "value": "",
+          "formula": "IF(ISTEXT(IFERROR(VLOOKUP(人物卡!Y16,人物卡!G48:I52,1,FALSE),IFERROR(VLOOKUP(人物卡!Y16,人物卡!D48:F52,1,FALSE),0))),\"★\",INDEX(本职技能!$A$2:$HX$75,MATCH(人物卡!Y16,本职技能!$A$2:$A$74,0),MATCH(人物卡!$P$5,本职技能!$A$1:$HX$1,0)))"
+        },
+        {
+          "addr": "AA16",
+          "value": "5",
+          "formula": ""
+        },
+        {
+          "addr": "AE16",
+          "value": "5 ",
+          "formula": "SUM(AA16:AD16)"
+        },
+        {
+          "addr": "AF16",
+          "value": "2 ",
+          "formula": "INT(AE16/2)"
+        },
+        {
+          "addr": "AG16",
+          "value": "1 ",
+          "formula": "INT(AE16/5)"
+        }
+      ]
+    },
+    {
+      "row": 20,
+      "cells": [
+        {
+          "addr": "L20",
+          "value": "",
+          "formula": "IF(ISTEXT(IFERROR(VLOOKUP(人物卡!M20,人物卡!G48:I52,1,FALSE),IFERROR(VLOOKUP(人物卡!M20,人物卡!E48:F52,1,FALSE),0))),\"★\",INDEX(本职技能!$A$2:$HX$75,MATCH(人物卡!M20,本职技能!$A$2:$A$74,0),MATCH(人物卡!$P$5,本职技能!$A$1:$HX$1,0)))"
+        },
+        {
+          "addr": "P20",
+          "value": "0",
+          "formula": "IF(ISBLANK(B57),5,IF(N20=B57,D57,5))"
+        },
+        {
+          "addr": "T20",
+          "value": "0 ",
+          "formula": "P20+Q20+R20+S20"
+        },
+        {
+          "addr": "U20",
+          "value": "0",
+          "formula": "INT(T20/2)"
+        },
+        {
+          "addr": "V20",
+          "value": "0",
+          "formula": "INT(T20/5)"
+        },
+        {
+          "addr": "X20",
+          "value": "",
+          "formula": "IF(ISTEXT(IFERROR(VLOOKUP(人物卡!Y20,人物卡!G48:I52,1,FALSE),IFERROR(VLOOKUP(人物卡!Y20,人物卡!D48:F52,1,FALSE),0))),\"★\",INDEX(本职技能!$A$2:$HX$75,MATCH(人物卡!Y20,本职技能!$A$2:$A$74,0),MATCH(人物卡!$P$5,本职技能!$A$1:$HX$1,0)))"
+        },
+        {
+          "addr": "AA20",
+          "value": "10",
+          "formula": ""
+        },
+        {
+          "addr": "AE20",
+          "value": "10 ",
+          "formula": "SUM(AA20:AD20)"
+        },
+        {
+          "addr": "AF20",
+          "value": "5 ",
+          "formula": "INT(AE20/2)"
+        },
+        {
+          "addr": "AG20",
+          "value": "2 ",
+          "formula": "INT(AE20/5)"
+        }
+      ]
+    },
+    {
+      "row": 31,
+      "cells": [
+        {
+          "addr": "L31",
+          "value": "",
+          "formula": "IF(ISTEXT(IFERROR(VLOOKUP(人物卡!M31,人物卡!G48:I52,1,FALSE),IFERROR(VLOOKUP(人物卡!M31,D48:F52,1,FALSE),0))),\"★\",INDEX(本职技能!$A$2:$HX$75,MATCH(人物卡!M31,本职技能!$A$2:$A$74,0),MATCH(人物卡!$P$5,本职技能!$A$1:$HX$1,0)))"
+        },
+        {
+          "addr": "P31",
+          "value": "10",
+          "formula": ""
+        },
+        {
+          "addr": "T31",
+          "value": "10 ",
+          "formula": "SUM(P31:S31)"
+        },
+        {
+          "addr": "U31",
+          "value": "5",
+          "formula": "INT(T31/2)"
+        },
+        {
+          "addr": "V31",
+          "value": "2",
+          "formula": "INT(T31/5)"
+        },
+        {
+          "addr": "X31",
+          "value": "",
+          "formula": "IF(ISTEXT(IFERROR(VLOOKUP(人物卡!Y31,人物卡!G48:I52,1,FALSE),IFERROR(VLOOKUP(人物卡!Y31,人物卡!D48:F52,1,FALSE),0))),\"★\",INDEX(本职技能!$A$2:$HX$75,MATCH(人物卡!Y31,本职技能!$A$2:$A$74,0),MATCH(人物卡!$P$5,本职技能!$A$1:$HX$1,0)))"
+        },
+        {
+          "addr": "AA31",
+          "value": "0",
+          "formula": "IF(ISBLANK(E57),1,IF(Z31=E57,F57,1))"
+        },
+        {
+          "addr": "AE31",
+          "value": "0 ",
+          "formula": "AA31+AB31+AD31+AC31"
+        },
+        {
+          "addr": "AF31",
+          "value": "0 ",
+          "formula": "INT(AE31/2)"
+        },
+        {
+          "addr": "AG31",
+          "value": "0 ",
+          "formula": "INT(AE31/5)"
+        }
+      ]
+    },
+    {
+      "row": 35,
+      "cells": [
+        {
+          "addr": "L35",
+          "value": "",
+          "formula": "IF(ISTEXT(IFERROR(VLOOKUP(人物卡!M35,人物卡!G48:I52,1,FALSE),IFERROR(VLOOKUP(人物卡!M35,D48:F52,1,FALSE),0))),\"★\",INDEX(本职技能!$A$2:$HX$75,MATCH(人物卡!M35,本职技能!$A$2:$A$74,0),MATCH(人物卡!$P$5,本职技能!$A$1:$HX$1,0)))"
+        },
+        {
+          "addr": "P35",
+          "value": "0",
+          "formula": "附表!C11"
+        },
+        {
+          "addr": "T35",
+          "value": "0 ",
+          "formula": "P35+Q35+R35+S35"
+        },
+        {
+          "addr": "U35",
+          "value": "0",
+          "formula": "INT(T35/2)"
+        },
+        {
+          "addr": "V35",
+          "value": "0",
+          "formula": "INT(T35/5)"
+        },
+        {
+          "addr": "X35",
+          "value": "",
+          "formula": "IF(ISTEXT(IFERROR(VLOOKUP(人物卡!Y35,人物卡!G48:I52,1,FALSE),IFERROR(VLOOKUP(人物卡!Y35,人物卡!D48:F52,1,FALSE),0))),\"★\",INDEX(本职技能!$A$2:$HX$75,MATCH(人物卡!Y35,本职技能!$A$2:$A$74,0),MATCH(人物卡!$P$5,本职技能!$A$1:$HX$1,0)))"
+        },
+        {
+          "addr": "AA35",
+          "value": "25",
+          "formula": ""
+        },
+        {
+          "addr": "AE35",
+          "value": "25 ",
+          "formula": "SUM(AA35:AD35)"
+        },
+        {
+          "addr": "AF35",
+          "value": "12 ",
+          "formula": "INT(AE35/2)"
+        },
+        {
+          "addr": "AG35",
+          "value": "5 ",
+          "formula": "INT(AE35/5)"
+        }
+      ]
+    },
+    {
+      "row": 49,
+      "cells": [
+        {
+          "addr": "L49",
+          "value": "",
+          "formula": "IF(ISTEXT(IFERROR(VLOOKUP(人物卡!M49,人物卡!G48:I52,1,FALSE),IFERROR(VLOOKUP(人物卡!M49,D48:F52,1,FALSE),0))),\"★\",INDEX(本职技能!$A$2:$HX$75,MATCH(人物卡!M49,本职技能!$A$2:$A$74,0),MATCH(人物卡!$P$5,本职技能!$A$1:$HX$1,0)))"
+        },
+        {
+          "addr": "P49",
+          "value": "0",
+          "formula": "AY5"
+        },
+        {
+          "addr": "T49",
+          "value": "0 ",
+          "formula": "P49+Q49+R49+S49"
+        },
+        {
+          "addr": "U49",
+          "value": "0",
+          "formula": "INT(T49/2)"
+        },
+        {
+          "addr": "V49",
+          "value": "0",
+          "formula": "INT(T49/5)"
+        },
+        {
+          "addr": "X49",
+          "value": "",
+          "formula": ""
+        },
+        {
+          "addr": "AA49",
+          "value": "",
+          "formula": ""
+        },
+        {
+          "addr": "AE49",
+          "value": "0 ",
+          "formula": "SUM(AA49:AD49)"
+        },
+        {
+          "addr": "AF49",
+          "value": "0 ",
+          "formula": "INT(AE49/2)"
+        },
+        {
+          "addr": "AG49",
+          "value": "0 ",
+          "formula": "INT(AE49/5)"
+        }
+      ]
+    }
+  ],
+  "weapons": [
+    {
+      "row": 53,
+      "cells": [
+        {
+          "addr": "M53",
+          "value": "肉搏",
+          "formula": ""
+        },
+        {
+          "addr": "N53",
+          "value": "斗殴",
+          "formula": ""
+        },
+        {
+          "addr": "P53",
+          "value": "25 ",
+          "formula": "T34"
+        },
+        {
+          "addr": "Q53",
+          "value": "12",
+          "formula": "INT(P53/2)"
+        },
+        {
+          "addr": "R53",
+          "value": "5",
+          "formula": "INT(P53/5)"
+        },
+        {
+          "addr": "S53",
+          "value": "1D3+DB",
+          "formula": ""
+        },
+        {
+          "addr": "U53",
+          "value": "——",
+          "formula": ""
+        },
+        {
+          "addr": "W53",
+          "value": "×",
+          "formula": ""
+        },
+        {
+          "addr": "X53",
+          "value": "1",
+          "formula": ""
+        },
+        {
+          "addr": "Z53",
+          "value": "——",
+          "formula": ""
+        },
+        {
+          "addr": "AB53",
+          "value": "——",
+          "formula": ""
+        }
+      ]
+    },
+    {
+      "row": 54,
+      "cells": [
+        {
+          "addr": "M54",
+          "value": "",
+          "formula": ""
+        },
+        {
+          "addr": "N54",
+          "value": "←请选择类型",
+          "formula": "IF($M54=0,\"←请选择类型\",VLOOKUP($M54,武器列表!$B$2:$I$105,2,FALSE))"
+        },
+        {
+          "addr": "P54",
+          "value": "",
+          "formula": "附表!AP15"
+        },
+        {
+          "addr": "Q54",
+          "value": "",
+          "formula": "IF(P54=\"\",\"\",INT(P54/2))"
+        },
+        {
+          "addr": "R54",
+          "value": "",
+          "formula": "IF(P54=\"\",\"\",INT(P54/5))"
+        },
+        {
+          "addr": "S54",
+          "value": "",
+          "formula": "IF($M54=0,\"\",VLOOKUP($M54,武器列表!$B$2:$I$105,3,FALSE))"
+        },
+        {
+          "addr": "U54",
+          "value": "",
+          "formula": "IF($M54=0,\"\",VLOOKUP($M54,武器列表!$B$2:$I$105,4,FALSE))"
+        },
+        {
+          "addr": "W54",
+          "value": "",
+          "formula": "IF($M54=0,\"\",VLOOKUP($M54,武器列表!$B$2:$I$105,5,FALSE))"
+        },
+        {
+          "addr": "X54",
+          "value": "",
+          "formula": "IF($M54=0,\"\",VLOOKUP($M54,武器列表!$B$2:$I$105,6,FALSE))"
+        },
+        {
+          "addr": "Z54",
+          "value": "",
+          "formula": "IF($M54=0,\"\",VLOOKUP($M54,武器列表!$B$2:$I$105,7,FALSE))"
+        },
+        {
+          "addr": "AB54",
+          "value": "",
+          "formula": "IF($M54=0,\"\",VLOOKUP($M54,武器列表!$B$2:$I$105,8,FALSE))"
+        }
+      ]
+    },
+    {
+      "row": 55,
+      "cells": [
+        {
+          "addr": "M55",
+          "value": "",
+          "formula": ""
+        },
+        {
+          "addr": "N55",
+          "value": "",
+          "formula": "IF(N54=\"←请选择类型\",\"\",IF($M55=0,\"←请选择类型\",VLOOKUP($M55,武器列表!$B$2:$I$105,2,FALSE)))"
+        },
+        {
+          "addr": "P55",
+          "value": "",
+          "formula": "附表!AP16"
+        },
+        {
+          "addr": "Q55",
+          "value": "",
+          "formula": "IF(P55=\"\",\"\",INT(P55/2))"
+        },
+        {
+          "addr": "R55",
+          "value": "",
+          "formula": "IF(P55=\"\",\"\",INT(P55/5))"
+        },
+        {
+          "addr": "S55",
+          "value": "",
+          "formula": "IF($M55=0,\"\",VLOOKUP($M55,武器列表!$B$2:$I$105,3,FALSE))"
+        },
+        {
+          "addr": "U55",
+          "value": "",
+          "formula": "IF($M55=0,\"\",VLOOKUP($M55,武器列表!$B$2:$I$105,4,FALSE))"
+        },
+        {
+          "addr": "W55",
+          "value": "",
+          "formula": "IF($M55=0,\"\",VLOOKUP($M55,武器列表!$B$2:$I$105,5,FALSE))"
+        },
+        {
+          "addr": "X55",
+          "value": "",
+          "formula": "IF($M55=0,\"\",VLOOKUP($M55,武器列表!$B$2:$I$105,6,FALSE))"
+        },
+        {
+          "addr": "Z55",
+          "value": "",
+          "formula": "IF($M55=0,\"\",VLOOKUP($M55,武器列表!$B$2:$I$105,7,FALSE))"
+        },
+        {
+          "addr": "AB55",
+          "value": "",
+          "formula": "IF($M55=0,\"\",VLOOKUP($M55,武器列表!$B$2:$I$105,8,FALSE))"
+        }
+      ]
+    },
+    {
+      "row": 56,
+      "cells": [
+        {
+          "addr": "M56",
+          "value": "",
+          "formula": ""
+        },
+        {
+          "addr": "N56",
+          "value": "",
+          "formula": "IF(OR(N55=\"←请选择类型\",N55=\"\"),\"\",IF($M56=0,\"←请选择类型\",VLOOKUP($M56,武器列表!$B$2:$I$105,2,FALSE)))"
+        },
+        {
+          "addr": "P56",
+          "value": "",
+          "formula": "附表!AP17"
+        },
+        {
+          "addr": "Q56",
+          "value": "",
+          "formula": "IF(P56=\"\",\"\",INT(P56/2))"
+        },
+        {
+          "addr": "R56",
+          "value": "",
+          "formula": "IF(P56=\"\",\"\",INT(P56/5))"
+        },
+        {
+          "addr": "S56",
+          "value": "",
+          "formula": "IF($M56=0,\"\",VLOOKUP($M56,武器列表!$B$2:$I$105,3,FALSE))"
+        },
+        {
+          "addr": "U56",
+          "value": "",
+          "formula": "IF($M56=0,\"\",VLOOKUP($M56,武器列表!$B$2:$I$105,4,FALSE))"
+        },
+        {
+          "addr": "W56",
+          "value": "",
+          "formula": "IF($M56=0,\"\",VLOOKUP($M56,武器列表!$B$2:$I$105,5,FALSE))"
+        },
+        {
+          "addr": "X56",
+          "value": "",
+          "formula": "IF($M56=0,\"\",VLOOKUP($M56,武器列表!$B$2:$I$105,6,FALSE))"
+        },
+        {
+          "addr": "Z56",
+          "value": "",
+          "formula": "IF($M56=0,\"\",VLOOKUP($M56,武器列表!$B$2:$I$105,7,FALSE))"
+        },
+        {
+          "addr": "AB56",
+          "value": "",
+          "formula": "IF($M56=0,\"\",VLOOKUP($M56,武器列表!$B$2:$I$105,8,FALSE))"
+        }
+      ]
+    }
+  ]
+}

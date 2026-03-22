@@ -1,0 +1,72 @@
+[
+  {
+    "id": "battle-soldier",
+    "name": "战场经历包（普通士兵）",
+    "sanityLoss": "1D10+5",
+    "initialAge": "自行调整",
+    "skillGrowth": "70",
+    "backgroundAdd": "战争相关的伤疤/疤痕或恐惧症/躁狂症",
+    "skills": "攀爬，格斗(斗殴)，射击(步霰)，急救，恐吓，聆听，潜行，投掷，妙手，侦查，生存",
+    "notes": "对目击尸体和重伤员造成的理智损失免疫"
+  },
+  {
+    "id": "battle-officer",
+    "name": "战场经历包（军官）",
+    "sanityLoss": "1D10+5",
+    "initialAge": "自行调整",
+    "skillGrowth": "70",
+    "backgroundAdd": "战争相关的伤疤/疤痕或恐惧症/躁狂症",
+    "skills": "攀爬，格斗(斗殴)，射击(手枪)，急救，聆听，导航/取悦/说服/恐吓中一项，潜行，投掷，侦查",
+    "notes": "对目击尸体和重伤员造成的理智损失免疫"
+  },
+  {
+    "id": "police",
+    "name": "警务经历包",
+    "sanityLoss": "1D10",
+    "initialAge": ">=25",
+    "skillGrowth": "60",
+    "backgroundAdd": "警察工作相关的伤疤/疤痕或恐惧症/躁狂症",
+    "skills": "攀爬，汽车驾驶，格斗(斗殴)，射击(手枪或步霰)，急救，法律，聆听，语言，两项社交技能(取悦/话术/说服/恐吓)，追踪",
+    "notes": "对目击尸体造成的理智损失免疫"
+  },
+  {
+    "id": "criminal",
+    "name": "罪犯经历包",
+    "sanityLoss": "1D10",
+    "initialAge": ">=20",
+    "skillGrowth": "60",
+    "backgroundAdd": "犯罪历史相关的伤疤/疤痕或恐惧症/躁狂症",
+    "skills": "攀爬，汽车驾驶，格斗(任一)，射击(任一)，一项社交技能(取悦/话术/说服/恐吓)，法律，聆听，锁匠，心理学，追踪",
+    "notes": "对目击尸体、目击或亲自谋杀、目击对人类的暴力残害造成的理智损失免疫"
+  },
+  {
+    "id": "medical",
+    "name": "医务经历包",
+    "sanityLoss": "1D10",
+    "initialAge": ">=30",
+    "skillGrowth": "60",
+    "backgroundAdd": "个人背景相关的伤疤/疤痕或恐惧症/躁狂症",
+    "skills": "急救，法律，聆听，医学，心理学，侦查，科学(任二)",
+    "notes": "对目击尸体和重伤员造成的理智损失免疫"
+  },
+  {
+    "id": "mythos",
+    "name": "神话经历包",
+    "sanityLoss": "CM",
+    "initialAge": "自行调整",
+    "skillGrowth": "自定义",
+    "backgroundAdd": "神话经历相关的伤疤/疤痕或恐惧症/躁狂症、遭遇的怪异存在",
+    "skills": "克苏鲁神话",
+    "notes": "经过 KP 同意后，“相信者”可以习得法术。"
+  },
+  {
+    "id": "custom",
+    "name": "自定义经历包",
+    "sanityLoss": "",
+    "initialAge": "",
+    "skillGrowth": "",
+    "backgroundAdd": "",
+    "skills": "",
+    "notes": "由 KP 与玩家协商填入。"
+  }
+]
