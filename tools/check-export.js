@@ -6,7 +6,8 @@ import XLSX from "xlsx";
 const ROOT = process.cwd();
 const TEMPLATE_NAMES = new Set([
   "COC七版空白卡G3.5.11.5 (修订版).xlsx",
-  "沙文.弗朗斯-逃兵-小乔.xlsx",
+  "COC七版空白卡G3.5.11.5.xlsx",
+  "COC七版空白卡.xlsx",
 ]);
 
 const ATTRIBUTE_RULES = [

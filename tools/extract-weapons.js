@@ -11,8 +11,15 @@ const OUTPUT_JSON = path.join(OUTPUT_DIR, "weapons.from_excel.json");
 const OUTPUT_REPORT = path.join(OUTPUT_DIR, "weapons.from_excel.report.txt");
 
 function resolveInputWorkbook() {
-  const preferred = path.join(ROOT, "沙文.弗朗斯-逃兵-小乔.xlsx");
-  if (fs.existsSync(preferred)) return preferred;
+  const preferred = [
+    "COC七版空白卡G3.5.11.5 (修订版).xlsx",
+    "COC七版空白卡G3.5.11.5.xlsx",
+    "COC七版空白卡.xlsx",
+  ];
+  for (const file of preferred) {
+    const full = path.join(ROOT, file);
+    if (fs.existsSync(full)) return full;
+  }
   const firstXlsx = fs.readdirSync(ROOT).find((f) => f.toLowerCase().endsWith(".xlsx"));
   if (!firstXlsx) throw new Error("项目根目录未找到 .xlsx 文件");
   return path.join(ROOT, firstXlsx);

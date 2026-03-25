@@ -44,6 +44,22 @@ export function extractSkillKeysFromText(text) {
       }
     }
   });
+
+  if (set.has('firearmsHandgun') && set.has('firearmsRifle')) {
+    const hasHandgunHint = /手枪|手槍/i.test(String(text || ''));
+    const hasRifleHint = /步枪|步槍|霰弹枪|霰彈槍|shotgun|rifle/i.test(String(text || ''));
+    if (hasHandgunHint && !hasRifleHint) set.delete('firearmsRifle');
+    if (hasRifleHint && !hasHandgunHint) set.delete('firearmsHandgun');
+  }
+
+  if (set.has('driveAuto') && set.has('pilot')) {
+    const raw = String(text || '');
+    const hasAutoHint = /汽车|汽車|车辆|車輛|car|auto/i.test(raw);
+    const hasPilotHint = /飞行器|飛行器|船|舰|艦|aircraft|boat|ship|pilot|飞行|飛行/i.test(raw);
+    if (hasAutoHint && !hasPilotHint) set.delete('pilot');
+    if (hasPilotHint && !hasAutoHint) set.delete('driveAuto');
+  }
+
   return Array.from(set);
 }
 

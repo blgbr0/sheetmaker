@@ -90,7 +90,17 @@ const filteredOccs = computed(() => {
 });
 
 function selectOccupation(occ) {
-  applyOccupationToState(occ, true);
+  const hasOccAllocation = state.skills.some((skill) => Number(skill.occ) > 0);
+  const isSwitchingOccupation = Boolean(state.occupation.selectedName) && state.occupation.selectedName !== occ.name;
+  let clearOccPoints = true;
+
+  if (hasOccAllocation && isSwitchingOccupation) {
+    clearOccPoints = confirm(
+      '检测到你已分配职业点。\n点击“确定”：切换职业并清空职业点。\n点击“取消”：切换职业并保留当前职业点。',
+    );
+  }
+
+  applyOccupationToState(occ, clearOccPoints);
   showOccSheet.value = false;
 }
 

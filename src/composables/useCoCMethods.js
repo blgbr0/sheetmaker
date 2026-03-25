@@ -50,6 +50,7 @@ export function bindMethods(state, runtime) {
 
     if (profile.educationChecks > 0) {
       lines.push(`教育成长检定：${profile.educationChecks} 次`);
+      lines.push('教育成长检定结果需手动调整 EDU（当前不会自动执行成长检定）。');
     }
     if (profile.movPenalty > 0) {
       lines.push(`MOV -${profile.movPenalty}`);
@@ -379,7 +380,7 @@ export function bindMethods(state, runtime) {
 
     return {
       applied: true,
-      message: `已按 ${profile.label} 建议应用年龄修正。`,
+      message: `已按 ${profile.label} 建议应用年龄减值（教育成长检定需手动处理）。`,
       profile,
     };
   }

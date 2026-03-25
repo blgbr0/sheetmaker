@@ -65,7 +65,8 @@ const SIMPLE_ROW_MAP = {
 function resolveInputWorkbook() {
   const preferred = [
     "COC七版空白卡G3.5.11.5 (修订版).xlsx",
-    "沙文.弗朗斯-逃兵-小乔.xlsx",
+    "COC七版空白卡G3.5.11.5.xlsx",
+    "COC七版空白卡.xlsx",
   ];
   const files = fs.readdirSync(ROOT).filter((file) => file.toLowerCase().endsWith(".xlsx"));
   if (!files.length) throw new Error("项目根目录未找到 .xlsx 文件");

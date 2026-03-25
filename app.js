@@ -1,5 +1,5 @@
 const STORAGE_KEY = "coc7-sheet-maker-v3";
-const TEMPLATE_FILE = "沙文.弗朗斯-逃兵-小乔.xlsx";
+const TEMPLATE_FILE = "COC七版空白卡G3.5.11.5 (修订版).xlsx";
 
 const STAGES = [
   { label: "序章", title: "角色身份", goal: "先在职业图鉴中选择职业，再填写调查员基础信息。" },
