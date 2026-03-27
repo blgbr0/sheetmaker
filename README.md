@@ -16,6 +16,7 @@
 - 属性骰点、快速分配、年龄修正预览与应用。
 - 技能页职业技能高亮、可选组/自选项选择、规则软校验与超限提醒。
 - 背景、关键链接、经历包与武器选择（可累加数量、可移除）。
+- 草稿自动持久化（本地缓存，刷新后可继续）。
 - Excel 导出：写入模板关键单元格，并兼容原生端文件保存与分享。
 
 ## 技术栈
@@ -58,3 +59,4 @@ npm run cap:open:android
 - 产品介绍：`docs/open-source-intro.md`
 - APK 发布说明：`docs/apk-release.md`
 - 移动端路线：`docs/mobile-app-roadmap.md`
+- 改造清单：`docs/refactor-checklist.md`

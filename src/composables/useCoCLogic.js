@@ -1,4 +1,4 @@
-import { reactive } from 'vue';
+import { reactive, watch } from 'vue';
 import {
   SKILL_DEFS,
   SKILL_ALIAS,
@@ -11,6 +11,9 @@ import {
 import { FALLBACK_EXPERIENCE_PACKS } from './coc7Rules.js';
 import { normalizeInt, clamp, normalizeText, normalizeFormula, chineseToInt } from './utils.js';
 import { bindMethods } from './useCoCMethods.js';
+
+const DRAFT_STORAGE_KEY = 'coc7-sheet-maker-v1-draft';
+const DRAFT_SAVE_DELAY = 240;
 
 export function getExpandedOccupationSearchTerms(query) {
   const normalized = normalizeText(query);
@@ -284,8 +287,130 @@ export function createInitialState() {
   };
 }
 
+function sanitizeSelectedWeapons(rawWeapons) {
+  if (!Array.isArray(rawWeapons)) return [];
+  return rawWeapons
+    .map((weapon, index) => {
+      const name = String(weapon?.name || '').trim();
+      if (!name) return null;
+      return {
+        id: String(weapon?.id || `saved-${index + 1}`),
+        name,
+        type: String(weapon?.type || '').trim(),
+        skill: String(weapon?.skill || '').trim(),
+        damage: String(weapon?.damage || '').trim(),
+        range: String(weapon?.range || '').trim(),
+        era: String(weapon?.era || '').trim(),
+        penetrate: String(weapon?.penetrate || '').trim(),
+        attacks_per_round: String(weapon?.attacks_per_round || '').trim(),
+        ammo: String(weapon?.ammo || '').trim(),
+        malfunction: String(weapon?.malfunction || '').trim(),
+        notes: String(weapon?.notes || '').trim(),
+        count: Math.max(1, normalizeInt(weapon?.count) || 1),
+      };
+    })
+    .filter(Boolean);
+}
+
+function hydrateSkills(savedSkills) {
+  const base = makeInitialSkills();
+  const byKey = new Map(
+    (Array.isArray(savedSkills) ? savedSkills : [])
+      .filter((item) => item && item.key)
+      .map((item) => [item.key, item]),
+  );
+
+  return base.map((skill) => {
+    const saved = byKey.get(skill.key) || {};
+    return {
+      ...skill,
+      occ: Math.max(0, normalizeInt(saved.occ)),
+      interest: Math.max(0, normalizeInt(saved.interest)),
+      specialization: String(saved.specialization || ''),
+      specializationChoice: String(saved.specializationChoice || ''),
+    };
+  });
+}
+
+function loadDraftState() {
+  const base = createInitialState();
+  if (typeof localStorage === 'undefined') return base;
+
+  try {
+    const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
+    if (!raw) return base;
+    const saved = JSON.parse(raw);
+
+    return {
+      ...base,
+      stage: clamp(normalizeInt(saved?.stage), 0, 4),
+      basic: { ...base.basic, ...(saved?.basic || {}) },
+      occupation: {
+        ...base.occupation,
+        ...(saved?.occupation || {}),
+        mandatoryRefs: Array.isArray(saved?.occupation?.mandatoryRefs) ? saved.occupation.mandatoryRefs : [],
+        choiceGroups: Array.isArray(saved?.occupation?.choiceGroups) ? saved.occupation.choiceGroups : [],
+        groupPicks: saved?.occupation?.groupPicks && typeof saved.occupation.groupPicks === 'object' ? saved.occupation.groupPicks : {},
+        freePicks: Array.isArray(saved?.occupation?.freePicks) ? saved.occupation.freePicks : [],
+      },
+      attrs: { ...base.attrs, ...(saved?.attrs || {}) },
+      pools: { ...base.pools, ...(saved?.pools || {}) },
+      meta: { ...base.meta, ...(saved?.meta || {}) },
+      background: { ...base.background, ...(saved?.background || {}) },
+      skills: hydrateSkills(saved?.skills),
+      selectedWeapons: sanitizeSelectedWeapons(saved?.selectedWeapons),
+      occupationSearch: String(saved?.occupationSearch || ''),
+      weaponSearch: String(saved?.weaponSearch || ''),
+    };
+  } catch {
+    return base;
+  }
+}
+
+function buildDraftSnapshot(state) {
+  return {
+    stage: normalizeInt(state.stage),
+    basic: { ...state.basic },
+    occupation: {
+      ...state.occupation,
+      mandatoryRefs: [...(state.occupation.mandatoryRefs || [])],
+      choiceGroups: [...(state.occupation.choiceGroups || [])],
+      groupPicks: { ...(state.occupation.groupPicks || {}) },
+      freePicks: [...(state.occupation.freePicks || [])],
+    },
+    attrs: { ...state.attrs },
+    pools: { ...state.pools },
+    meta: { ...state.meta },
+    background: { ...state.background },
+    skills: state.skills.map((skill) => ({
+      key: skill.key,
+      occ: normalizeInt(skill.occ),
+      interest: normalizeInt(skill.interest),
+      specialization: String(skill.specialization || ''),
+      specializationChoice: String(skill.specializationChoice || ''),
+    })),
+    selectedWeapons: state.selectedWeapons.map((weapon) => ({
+      id: String(weapon.id || ''),
+      name: String(weapon.name || ''),
+      type: String(weapon.type || ''),
+      skill: String(weapon.skill || ''),
+      damage: String(weapon.damage || ''),
+      range: String(weapon.range || ''),
+      era: String(weapon.era || ''),
+      penetrate: String(weapon.penetrate || ''),
+      attacks_per_round: String(weapon.attacks_per_round || ''),
+      ammo: String(weapon.ammo || ''),
+      malfunction: String(weapon.malfunction || ''),
+      notes: String(weapon.notes || ''),
+      count: Math.max(1, normalizeInt(weapon.count) || 1),
+    })),
+    occupationSearch: String(state.occupationSearch || ''),
+    weaponSearch: String(state.weaponSearch || ''),
+  };
+}
+
 export function useCoCLogic() {
-  const state = reactive(createInitialState());
+  const state = reactive(loadDraftState());
   const runtime = reactive({
     occupations: FALLBACK_OCCUPATIONS_RAW.map(normalizeOccupation),
     weapons: [...FALLBACK_WEAPONS],
@@ -298,6 +423,37 @@ export function useCoCLogic() {
   });
 
   const methods = bindMethods(state, runtime);
+
+  let draftTimer = null;
+
+  function saveDraftNow() {
+    if (typeof localStorage === 'undefined') return;
+    try {
+      localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(buildDraftSnapshot(state)));
+    } catch {
+      // Ignore quota/security errors in private mode.
+    }
+  }
+
+  function clearDraft() {
+    if (typeof localStorage === 'undefined') return;
+    try {
+      localStorage.removeItem(DRAFT_STORAGE_KEY);
+    } catch {
+      // Ignore storage errors.
+    }
+  }
+
+  watch(
+    state,
+    () => {
+      if (draftTimer) clearTimeout(draftTimer);
+      draftTimer = setTimeout(() => {
+        saveDraftNow();
+      }, DRAFT_SAVE_DELAY);
+    },
+    { deep: true },
+  );
 
   async function loadJson(path) {
     try {
@@ -425,5 +581,5 @@ export function useCoCLogic() {
     }
   }
 
-  return { state, runtime, initRuntimeData, ...methods };
+  return { state, runtime, initRuntimeData, saveDraftNow, clearDraft, ...methods };
 }

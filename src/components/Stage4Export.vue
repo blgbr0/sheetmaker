@@ -44,6 +44,7 @@ const {
   getSkillTotal,
   getSelectedExperiencePack,
   getExperiencePackSummary,
+  clearDraft,
 } = inject('coc');
 
 const selectedExperiencePack = computed(() => getSelectedExperiencePack());
@@ -141,8 +142,34 @@ const SPECIALIZATION_CELL_MAP = {
   survival: 'Z37',
 };
 
-function setCell(doc, addr, value, type = null) {
-  setWorksheetCell(doc, addr, value, type);
+function normalizeCellRef(addr) {
+  return String(addr || '').trim().toUpperCase();
+}
+
+function createCellWriter(sheetDoc) {
+  const formulaMap = new Map();
+  const cells = Array.from(sheetDoc.getElementsByTagNameNS('*', 'c'));
+  cells.forEach((cell) => {
+    const ref = normalizeCellRef(cell.getAttribute('r'));
+    if (!ref) return;
+    const formulaNode = cell.getElementsByTagNameNS('*', 'f')[0];
+    if (!formulaNode) return;
+    formulaMap.set(ref, formulaNode.textContent || '');
+  });
+
+  const skippedFormulaCells = [];
+
+  function write(addr, value, type = null, reason = '') {
+    const ref = normalizeCellRef(addr);
+    if (formulaMap.has(ref)) {
+      skippedFormulaCells.push({ ref, reason, formula: formulaMap.get(ref) });
+      return false;
+    }
+    setWorksheetCell(sheetDoc, ref, value, type);
+    return true;
+  }
+
+  return { write, skippedFormulaCells };
 }
 
 function getOccupationSequence() {
@@ -203,18 +230,18 @@ function buildEquipmentLines() {
   return lines.slice(0, 15);
 }
 
-function fillBasicInfo(sheetDoc) {
-  setCell(sheetDoc, 'L3', state.basic.name || "");
-  setCell(sheetDoc, 'L4', "");
-  setCell(sheetDoc, 'P4', state.basic.era || "");
-  setCell(sheetDoc, 'L5', state.basic.occupation || "");
-  setCell(sheetDoc, 'P5', getOccupationSequence());
-  setCell(sheetDoc, 'L6', Number(state.basic.age) || "", Number.isFinite(Number(state.basic.age)) ? 'n' : 's');
-  setCell(sheetDoc, 'P6', state.basic.gender || "");
-  setCell(sheetDoc, 'L7', state.basic.residence || "");
-  setCell(sheetDoc, 'P7', state.basic.birthplace || "");
-  setCell(sheetDoc, 'L8', "");
-  setCell(sheetDoc, 'P8', state.skills.find((skill) => skill.key === 'languageOwn')?.specialization || "");
+function fillBasicInfo(write) {
+  write('L3', state.basic.name || "", null, '姓名');
+  write('L4', "", null, '占位字段');
+  write('P4', state.basic.era || "", null, '时代');
+  write('L5', state.basic.occupation || "", null, '职业名称');
+  write('P5', getOccupationSequence(), null, '职业序号');
+  write('L6', Number(state.basic.age) || "", Number.isFinite(Number(state.basic.age)) ? 'n' : 's', '年龄');
+  write('P6', state.basic.gender || "", null, '性别');
+  write('L7', state.basic.residence || "", null, '居住地');
+  write('P7', state.basic.birthplace || "", null, '出生地');
+  write('L8', "", null, '预留字段');
+  write('P8', state.skills.find((skill) => skill.key === 'languageOwn')?.specialization || "", null, '母语子类');
 
   const rawValues = {
     STR: state.attrs.STR,
@@ -225,17 +252,22 @@ function fillBasicInfo(sheetDoc) {
     POW: state.attrs.POW,
     SIZ: state.attrs.SIZ,
     EDU: state.attrs.EDU,
-    Luck: state.attrs.Luck,
   };
   Object.entries(rawValues).forEach(([key, value]) => {
     const mapping = ATTRIBUTE_INPUT_CELLS[key];
     if (!mapping?.base) return;
     const base = Math.max(0, Number(value) || 0);
-    setCell(sheetDoc, mapping.base, base, 'n');
+    write(mapping.base, base, 'n', `${key} 基础值`);
   });
+
+  const luckValue = Math.max(0, Number(state.attrs.Luck) || 0);
+  const wroteLuck = write(ATTRIBUTE_INPUT_CELLS.Luck.base, luckValue, 'n', 'Luck 当前值');
+  if (!wroteLuck) {
+    write('T7', luckValue, 'n', 'Luck 回填输入位');
+  }
 }
 
-function fillSkillTable(ws) {
+function fillSkillTable(write) {
   const skillByKey = new Map(state.skills.map((skill) => [skill.key, skill]));
 
   Object.entries(SKILL_EXPORT_ROWS).forEach(([key, config]) => {
@@ -243,70 +275,70 @@ function fillSkillTable(ws) {
     if (!skill) return;
     const cols = config.side === 'left' ? LEFT_COLUMNS : RIGHT_COLUMNS;
     const row = config.row;
-    setCell(ws, `${cols.occPts}${row}`, Number(skill.occ) || 0, 'n');
-    setCell(ws, `${cols.intPts}${row}`, Number(skill.interest) || 0, 'n');
+    write(`${cols.occPts}${row}`, Number(skill.occ) || 0, 'n', `${key} 职业点`);
+    write(`${cols.intPts}${row}`, Number(skill.interest) || 0, 'n', `${key} 兴趣点`);
 
     const specCell = SPECIALIZATION_CELL_MAP[key] || (config.specializationCell ? `${config.specializationCell}${row}` : "");
-    if (specCell) setCell(ws, specCell, skill.specialization || "");
+    if (specCell) write(specCell, skill.specialization || "", null, `${key} 子类`);
   });
 
   const occInfo = getOccupationInfo();
-  setCell(ws, 'B57', state.occupation.creditRatingRange ? `${state.occupation.creditRatingRange.min}-${state.occupation.creditRatingRange.max}` : (occInfo?.creditRatingRange ? `${occInfo.creditRatingRange.min}-${occInfo.creditRatingRange.max}` : ""));
-  setCell(ws, 'E57', Math.max(0, (state.pools.occupation || 0) - (state.pools.occSpent || 0)), 'n');
-  setCell(ws, 'G57', Math.max(0, (state.pools.interest || 0) - (state.pools.intSpent || 0)), 'n');
+  write('B57', state.occupation.creditRatingRange ? `${state.occupation.creditRatingRange.min}-${state.occupation.creditRatingRange.max}` : (occInfo?.creditRatingRange ? `${occInfo.creditRatingRange.min}-${occInfo.creditRatingRange.max}` : ""), null, '信用评级范围');
+  write('E57', Math.max(0, (state.pools.occupation || 0) - (state.pools.occSpent || 0)), 'n', '职业点剩余');
+  write('G57', Math.max(0, (state.pools.interest || 0) - (state.pools.intSpent || 0)), 'n', '兴趣点剩余');
 
   const creditTotal = skillByKey.get('creditRating') ? getSkillTotal(skillByKey.get('creditRating')) : 0;
-  setCell(ws, 'B60', `信用评级：${formatRateTriplet(creditTotal)}`);
+  write('B60', `信用评级：${formatRateTriplet(creditTotal)}`, null, '信用评级摘要');
 }
 
-function fillWeaponTable(ws) {
+function fillWeaponTable(write) {
   const rows = [54, 55, 56];
   rows.forEach((row, index) => {
     const weapon = state.selectedWeapons[index];
     if (!weapon) {
-      setCell(ws, `K${row}`, "");
-      setCell(ws, `M${row}`, 0, 'n');
+      write(`K${row}`, "", null, `武器${index + 1}技能`);
+      write(`M${row}`, 0, 'n', `武器${index + 1}名称`);
       return;
     }
-    setCell(ws, `K${row}`, weapon.skill || "");
-    setCell(ws, `M${row}`, weapon.name || "");
+    write(`K${row}`, weapon.skill || "", null, `武器${index + 1}技能`);
+    write(`M${row}`, weapon.name || "", null, `武器${index + 1}名称`);
   });
 }
 
-function fillBackground(ws) {
+function fillBackground(write) {
   const creditSkill = state.skills.find((skill) => skill.key === 'creditRating');
   const creditTotal = creditSkill ? getSkillTotal(creditSkill) : 0;
 
-  setCell(ws, 'F60', `生活水平：${state.background.assets || '未填写'}`);
-  setCell(ws, 'C61', state.background.cash || "");
-  setCell(ws, 'E61', "");
-  setCell(ws, 'G61', state.background.assets || "");
-  setCell(ws, 'I61', '美元');
+  write('F60', `生活水平：${state.background.assets || '未填写'}`, null, '生活水平');
+  write('C61', state.background.cash || "", null, '现金');
+  write('E61', "", null, '留空字段');
+  write('G61', state.background.assets || "", null, '资产');
+  write('I61', '美元', null, '货币单位');
 
-  setCell(ws, 'M62', state.background.desc || "");
-  setCell(ws, 'M64', state.background.belief || "");
-  setCell(ws, 'M66', state.background.importantPerson || "");
-  setCell(ws, 'M68', state.background.importantPlace || "");
-  setCell(ws, 'M70', state.background.treasure || "");
-  setCell(ws, 'M72', state.background.traits || "");
-  setCell(ws, 'M74', "");
+  write('M62', state.background.desc || "", null, '形象描述');
+  write('M64', state.background.belief || "", null, '思想与信念');
+  write('M66', state.background.importantPerson || "", null, '重要之人');
+  write('M68', state.background.importantPlace || "", null, '意义之地');
+  write('M70', state.background.treasure || "", null, '珍视之物');
+  write('M72', state.background.traits || "", null, '特质');
+  write('M74', "", null, '额外背景');
 
-  Object.values(KEY_LINK_CELL_MAP).forEach((addr) => setCell(ws, addr, '☐'));
+  Object.values(KEY_LINK_CELL_MAP).forEach((addr) => write(addr, '☐', null, '关键链接勾选'));
   if (state.background.keyLinkType && KEY_LINK_CELL_MAP[state.background.keyLinkType]) {
-    setCell(ws, KEY_LINK_CELL_MAP[state.background.keyLinkType], '☑');
+    write(KEY_LINK_CELL_MAP[state.background.keyLinkType], '☑', null, '关键链接勾选');
   }
 
-  setCell(ws, 'B68', buildBioText());
+  write('B68', buildBioText(), null, '背景整合描述');
   const items = buildEquipmentLines();
   for (let row = 63; row <= 77; row += 1) {
-    setCell(ws, `X${row}`, items[row - 63] || "");
+    write(`X${row}`, items[row - 63] || "", null, '装备清单');
   }
 
-  setCell(ws, 'B63', state.background.assets || "");
-  setCell(ws, 'B60', `信用评级：${formatRateTriplet(creditTotal)}`);
+  write('B63', state.background.assets || "", null, '资产摘要');
+  write('B60', `信用评级：${formatRateTriplet(creditTotal)}`, null, '信用评级摘要');
 }
 
-function fillOccupationNotes(ws) {
+function fillOccupationNotes(write) {
   const occ = getOccupationInfo();
   if (!occ) return;
   const lines = [];
@@ -315,7 +347,17 @@ function fillOccupationNotes(ws) {
   if (occ.skillText) lines.push(`本职技能：${occ.skillText}`);
   if (occ.recommended_contact || occ.recommendedContact) lines.push(`推荐关系人：${occ.recommended_contact || occ.recommendedContact}`);
   if (occ.intro) lines.push(`职业介绍：${occ.intro}`);
-  setCell(ws, 'B8', lines.join('\n'));
+  write('B8', lines.join('\n'), null, '职业说明文本');
+}
+
+function summarizeSkippedFormulaCells(skippedFormulaCells) {
+  if (!skippedFormulaCells.length) return null;
+  const sample = skippedFormulaCells
+    .slice(0, 8)
+    .map((item) => `${item.ref}(${item.reason || '未命名字段'})`)
+    .join(' | ');
+  console.info(`[Export] 跳过公式单元格 ${skippedFormulaCells.length} 个。示例：${sample}`);
+  return { total: skippedFormulaCells.length };
 }
 
 async function doExport() {
@@ -333,13 +375,14 @@ async function doExport() {
 
     const workbookDoc = await readXmlFromZip(zip, 'xl/workbook.xml');
     const sheetDoc = await readXmlFromZip(zip, 'xl/worksheets/sheet1.xml');
+    const writer = createCellWriter(sheetDoc);
 
     setWorkbookForceRecalc(workbookDoc);
-    fillBasicInfo(sheetDoc);
-    fillSkillTable(sheetDoc);
-    fillWeaponTable(sheetDoc);
-    fillBackground(sheetDoc);
-    fillOccupationNotes(sheetDoc);
+    fillBasicInfo(writer.write);
+    fillSkillTable(writer.write);
+    fillWeaponTable(writer.write);
+    fillBackground(writer.write);
+    fillOccupationNotes(writer.write);
 
     writeXmlToZip(zip, 'xl/workbook.xml', workbookDoc);
     writeXmlToZip(zip, 'xl/worksheets/sheet1.xml', sheetDoc);
@@ -347,6 +390,7 @@ async function doExport() {
     const blob = await generateZipBlob(zip);
     const name = (state.basic.name || "调查员").trim();
     const result = await saveExportBlob(blob, `${name}-CoC7角色卡.xlsx`);
+    summarizeSkippedFormulaCells(writer.skippedFormulaCells);
     if (result.uri && !result.shared) {
       alert(`已导出到：${result.uri}`);
     }
@@ -357,6 +401,7 @@ async function doExport() {
 
 function resetAll() {
   if (confirm("确认清空所有内容重新开始吗？")) {
+    clearDraft();
     window.location.reload();
   }
 }
