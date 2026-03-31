@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import { provide } from 'vue';
+import { onMounted, provide } from 'vue';
 import { useCoCLogic } from './composables/useCoCLogic.js';
 import { STAGES } from './composables/constants.js';
 import VintagePaper from './components/common/VintagePaper.vue';
@@ -55,6 +55,10 @@ const coc = useCoCLogic();
 const { state } = coc;
 
 provide('coc', coc);
+
+onMounted(() => {
+  coc.initRuntimeData();
+});
 
 function gotoStage(i) {
   state.stage = i;

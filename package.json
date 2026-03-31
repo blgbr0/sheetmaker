@@ -1,6 +1,6 @@
 {
   "name": "dnd_pc_maker",
-  "version": "1.0.0",
+  "version": "0.2.0",
   "description": "这是一个纯前端离线可跑的《克苏鲁的呼唤 第七版》建卡工具。",
   "main": "app.js",
   "type": "module",

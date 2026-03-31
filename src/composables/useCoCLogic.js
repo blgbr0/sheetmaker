@@ -941,6 +941,31 @@ export function useCoCLogic() {
       console.error("动态加载 JSON 数据块失败", err);
     }
 
+    async function loadJsonByFetch(path) {
+      if (typeof fetch !== 'function') return null;
+      try {
+        const response = await fetch(path, { cache: 'no-store' });
+        if (!response.ok) return null;
+        return await response.json();
+      } catch (err) {
+        console.error(`加载 ${path} 失败`, err);
+        return null;
+      }
+    }
+
+    if (!Array.isArray(occupationRows) || !occupationRows.length) {
+      occupationRows = await loadJsonByFetch('/data/occupations.from_excel.json');
+    }
+    if (!Array.isArray(weaponRows) || !weaponRows.length) {
+      weaponRows = await loadJsonByFetch('/data/weapons.from_excel.json');
+    }
+    if (!specializationRows || typeof specializationRows !== 'object') {
+      specializationRows = await loadJsonByFetch('/data/skill-specializations.from_excel.json');
+    }
+    if (!Array.isArray(experiencePackRows) || !experiencePackRows.length) {
+      experiencePackRows = await loadJsonByFetch('/data/experience-packs.from_excel.json');
+    }
+
     if (Array.isArray(occupationRows) && occupationRows.length) {
       const parsed = occupationRows.map(normalizeOccupationRow).filter(Boolean);
       if (parsed.length) {
