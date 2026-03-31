@@ -26,21 +26,6 @@
       </div>
     </div>
 
-    <div class="age-adjust-box">
-      <div class="age-adjust-head">
-        <strong>年龄修正预览</strong>
-        <span class="age-pill">{{ ageState.profile.label }}</span>
-      </div>
-      <p class="age-summary">{{ ageState.profile.summary }}</p>
-      <ul v-if="agePreviewLines.length" class="age-lines">
-        <li v-for="(line, idx) in agePreviewLines" :key="idx">{{ line }}</li>
-      </ul>
-      <div class="age-actions">
-        <button class="btn-vintage primary" @click="applyAgeAdjustment">套用年龄修正</button>
-        <button class="btn-vintage" @click="clearAgeAdjustment" :disabled="!ageState.applied">撤销修正</button>
-      </div>
-    </div>
-
     <BottomSheet v-model="showOccSheet" title="职业图鉴">
       <div class="occ-sheet-content">
         <input type="text" class="input-vintage mb-4" v-model="search" placeholder="搜索职业..." />
@@ -74,10 +59,7 @@ const {
   runtime,
   applyDerived,
   applyOccupationToState,
-  getAgeAdjustmentPreview,
-  getAgeAdjustmentState,
-  applyAgeAdjustment: runAgeAdjustment,
-  clearAgeAdjustment: resetAgeAdjustment,
+  clearAgeAdjustment,
 } = inject('coc');
 
 const showOccSheet = ref(false);
@@ -105,20 +87,9 @@ function selectOccupation(occ) {
 }
 
 function onAgeChange() {
+  clearAgeAdjustment();
   applyDerived();
 }
-
-function applyAgeAdjustment() {
-  const result = runAgeAdjustment();
-  if (result?.message) alert(result.message);
-}
-
-function clearAgeAdjustment() {
-  resetAgeAdjustment();
-}
-
-const agePreviewLines = computed(() => getAgeAdjustmentPreview());
-const ageState = computed(() => getAgeAdjustmentState());
 </script>
 
 <style scoped>
@@ -127,70 +98,31 @@ const ageState = computed(() => getAgeAdjustmentState());
 .full-width { grid-column: 1 / -1; }
 label { font-size: 0.85rem; font-weight: bold; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
 
-.age-adjust-box {
-  margin-top: 20px;
-  padding: 14px;
-  border: 1px solid rgba(139, 0, 0, 0.18);
-  border-radius: 10px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.45), rgba(241, 235, 217, 0.75));
-}
-.age-adjust-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-.age-pill {
-  font-size: 0.78rem;
-  color: var(--accent-red);
-  border: 1px solid rgba(139, 0, 0, 0.25);
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: rgba(139, 0, 0, 0.05);
-  white-space: nowrap;
-}
-.age-summary {
-  color: var(--text-muted);
-  margin-bottom: 8px;
-}
-.age-lines {
-  margin: 0;
-  padding-left: 18px;
-  color: var(--text-color);
-}
-.age-lines li {
-  margin-bottom: 4px;
-}
-.age-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 12px;
-}
-
 .occ-selector {
-  border-bottom: 1px dashed var(--border-color);
+  border-bottom: 2px solid var(--border-color);
   padding: 4px;
   cursor: pointer;
   min-height: 32px;
+  transition: border-bottom-color 0.2s;
 }
+.occ-selector:hover { border-bottom-color: var(--accent-red); }
 .muted-text { color: rgba(43, 40, 33, 0.4); font-family: var(--font-body); }
 
 .mb-4 { margin-bottom: 16px; width: 100%; border-bottom-style: solid; }
 .occ-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
 .occ-card {
   border: 1px solid var(--border-color);
-  padding: 12px; border-radius: 4px; cursor: pointer;
+  padding: 12px; border-radius: 2px; cursor: pointer;
   transition: all 0.2s;
-  background: rgba(255,255,255,0.2);
+  background: rgba(0,0,0,0.02);
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.1);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
-.occ-card:hover { background: rgba(0,0,0,0.05); }
-.occ-card.active { border-color: var(--accent-red); background: rgba(139,0,0,0.05); }
+.occ-card:hover { background: rgba(0,0,0,0.05); transform: translate(-1px, -1px); box-shadow: 3px 3px 0 rgba(0,0,0,0.2); }
+.occ-card.active { border-color: var(--accent-red); background: rgba(110, 11, 11, 0.05); color: var(--accent-red); box-shadow: inset 0 0 4px rgba(139,0,0,0.2); }
 .occ-card h4 {
   margin: 0;
   font-size: 1rem;

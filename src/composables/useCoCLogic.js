@@ -14,6 +14,98 @@ import { bindMethods } from './useCoCMethods.js';
 
 const DRAFT_STORAGE_KEY = 'coc7-sheet-maker-v1-draft';
 const DRAFT_SAVE_DELAY = 240;
+const DEFAULT_SPECIALIZATION_BASE_OVERRIDES = {
+  artCraft: {
+    表演: 5,
+    绘画: 5,
+    雕刻: 5,
+    摄影: 5,
+    写作: 5,
+    舞蹈: 5,
+    乐器: 5,
+    理发: 5,
+    厨艺: 5,
+    伪造: 5,
+  },
+  languageOther: {
+    英语: 1,
+    法语: 1,
+    德语: 1,
+    拉丁语: 1,
+    汉语: 1,
+    日语: 1,
+    阿拉伯语: 1,
+    俄语: 1,
+    西班牙语: 1,
+    意大利语: 1,
+  },
+  languageOwn: {
+    英语: 0,
+    汉语: 0,
+    法语: 0,
+    德语: 0,
+    日语: 0,
+    俄语: 0,
+    西班牙语: 0,
+  },
+  pilot: {
+    飞行器: 1,
+    船: 1,
+    飞艇: 1,
+    热气球: 1,
+  },
+  science: {
+    化学: 1,
+    物理: 1,
+    生物学: 1,
+    药学: 1,
+    数学: 1,
+    地质学: 1,
+    天文学: 1,
+    植物学: 1,
+    动物学: 1,
+    密码学: 1,
+    气象学: 1,
+    工程学: 1,
+    司法科学: 1,
+  },
+  firearmsHandgun: {
+    左轮手枪: 20,
+    半自动手枪: 20,
+    手枪: 20,
+    冲锋枪: 15,
+    信号枪: 20,
+    机枪: 10,
+    重武器: 10,
+    '步枪/霰弹枪': 25,
+  },
+  firearmsRifle: {
+    步枪: 25,
+    霰弹枪: 25,
+    弓: 15,
+    弩: 15,
+    喷射器: 10,
+  },
+  fightingBrawl: {
+    斗殴: 25,
+    剑: 20,
+    斧: 15,
+    矛: 20,
+    鞭: 5,
+    连枷: 10,
+    绞索: 15,
+    链锯: 10,
+  },
+  survival: {
+    沙漠: 10,
+    极地: 10,
+    海上: 10,
+    森林: 10,
+    高山: 10,
+    丛林: 10,
+    地底: 10,
+  },
+};
 
 export function getExpandedOccupationSearchTerms(query) {
   const normalized = normalizeText(query);
@@ -112,6 +204,222 @@ function normalizeOccupationRef(ref, fallbackId) {
   };
 }
 
+function getSkillFamilyLabel(key) {
+  const familyMap = {
+    artCraft: '艺术/工艺',
+    fightingBrawl: '格斗',
+    firearmsHandgun: '射击',
+    firearmsRifle: '射击',
+    languageOther: '其他语言',
+    languageOwn: '母语',
+    pilot: '操作/驾驶',
+    science: '科学',
+    survival: '生存',
+  };
+  if (familyMap[key]) return familyMap[key];
+  return SKILL_DEFS.find((item) => item.key === key)?.name || key;
+}
+
+function makeSkillRef(key, fallbackId, options = {}) {
+  const specialization = String(options.specialization || '').trim();
+  const label = String(options.label || '').trim() ||
+    (specialization ? `${getSkillFamilyLabel(key)}（${specialization}）` : getSkillFamilyLabel(key));
+  return normalizeOccupationRef({
+    key,
+    keys: [key],
+    label,
+    specialization,
+  }, fallbackId);
+}
+
+function makeChoiceGroup(id, label, choose, options, marker = '') {
+  return {
+    id,
+    label,
+    choose,
+    marker,
+    options: uniqBy(options.filter(Boolean), (ref) => ref.id),
+  };
+}
+
+function makeSocialChoiceOptions(prefix) {
+  return [
+    makeSkillRef('charm', `${prefix}-charm`),
+    makeSkillRef('fastTalk', `${prefix}-fastTalk`),
+    makeSkillRef('persuade', `${prefix}-persuade`),
+    makeSkillRef('intimidate', `${prefix}-intimidate`),
+  ];
+}
+
+function makeSpecializationChoiceOptions(key, prefix, labels = []) {
+  return labels.map((label, index) => makeSkillRef(key, `${prefix}-${index + 1}`, { specialization: label }));
+}
+
+function buildExperiencePackPlan(id, skillText) {
+  const firearmBasicOptions = [
+    makeSkillRef('firearmsHandgun', `${id}-firearm-handgun`, { specialization: '手枪' }),
+    makeSkillRef('firearmsRifle', `${id}-firearm-rifle`, { specialization: '步枪/霰弹枪' }),
+  ];
+
+  switch (id) {
+    case 'battle-soldier':
+      return {
+        mandatoryRefs: [
+          makeSkillRef('climb', `${id}-climb`),
+          makeSkillRef('fightingBrawl', `${id}-fight`, { specialization: '斗殴' }),
+          makeSkillRef('firearmsRifle', `${id}-rifle`, { specialization: '步枪/霰弹枪' }),
+          makeSkillRef('firstAid', `${id}-firstAid`),
+          makeSkillRef('intimidate', `${id}-intimidate`),
+          makeSkillRef('listen', `${id}-listen`),
+          makeSkillRef('stealth', `${id}-stealth`),
+          makeSkillRef('throw', `${id}-throw`),
+          makeSkillRef('sleightOfHand', `${id}-sleight`),
+          makeSkillRef('spotHidden', `${id}-spot`),
+          makeSkillRef('survival', `${id}-survival`),
+        ],
+        choiceGroups: [],
+        freePickCount: 0,
+        allowAnySkill: false,
+      };
+    case 'battle-officer':
+      return {
+        mandatoryRefs: [
+          makeSkillRef('climb', `${id}-climb`),
+          makeSkillRef('fightingBrawl', `${id}-fight`, { specialization: '斗殴' }),
+          makeSkillRef('firearmsHandgun', `${id}-handgun`, { specialization: '手枪' }),
+          makeSkillRef('firstAid', `${id}-firstAid`),
+          makeSkillRef('listen', `${id}-listen`),
+          makeSkillRef('stealth', `${id}-stealth`),
+          makeSkillRef('throw', `${id}-throw`),
+          makeSkillRef('spotHidden', `${id}-spot`),
+        ],
+        choiceGroups: [
+          makeChoiceGroup(
+            `${id}-social-or-nav`,
+            '导航 / 社交技能 4选1',
+            1,
+            [
+              makeSkillRef('navigate', `${id}-navigate`),
+              ...makeSocialChoiceOptions(`${id}-social`),
+            ],
+            '⊙',
+          ),
+        ],
+        freePickCount: 0,
+        allowAnySkill: false,
+      };
+    case 'police':
+      return {
+        mandatoryRefs: [
+          makeSkillRef('climb', `${id}-climb`),
+          makeSkillRef('driveAuto', `${id}-driveAuto`),
+          makeSkillRef('fightingBrawl', `${id}-fight`, { specialization: '斗殴' }),
+          makeSkillRef('firstAid', `${id}-firstAid`),
+          makeSkillRef('law', `${id}-law`),
+          makeSkillRef('listen', `${id}-listen`),
+          makeSkillRef('languageOther', `${id}-languageOther`),
+          makeSkillRef('track', `${id}-track`),
+        ],
+        choiceGroups: [
+          makeChoiceGroup(`${id}-firearm`, '射击 2选1', 1, firearmBasicOptions, '☆'),
+          makeChoiceGroup(`${id}-social`, '社交技能 4选2', 2, makeSocialChoiceOptions(`${id}-social`), '☯'),
+        ],
+        freePickCount: 0,
+        allowAnySkill: false,
+      };
+    case 'criminal':
+      return {
+        mandatoryRefs: [
+          makeSkillRef('climb', `${id}-climb`),
+          makeSkillRef('driveAuto', `${id}-driveAuto`),
+          makeSkillRef('law', `${id}-law`),
+          makeSkillRef('listen', `${id}-listen`),
+          makeSkillRef('locksmith', `${id}-locksmith`),
+          makeSkillRef('psychology', `${id}-psychology`),
+          makeSkillRef('track', `${id}-track`),
+        ],
+        choiceGroups: [
+          makeChoiceGroup(
+            `${id}-fight-any`,
+            `格斗子类 ${SKILL_SPECIALIZATION_OPTIONS.fightingBrawl.length}选1`,
+            1,
+            makeSpecializationChoiceOptions('fightingBrawl', `${id}-fight`, SKILL_SPECIALIZATION_OPTIONS.fightingBrawl),
+            '☆',
+          ),
+          makeChoiceGroup(
+            `${id}-firearm-any`,
+            `射击子类 ${SKILL_SPECIALIZATION_OPTIONS.firearmsHandgun.length + SKILL_SPECIALIZATION_OPTIONS.firearmsRifle.length}选1`,
+            1,
+            [
+              ...makeSpecializationChoiceOptions('firearmsHandgun', `${id}-handgun`, SKILL_SPECIALIZATION_OPTIONS.firearmsHandgun),
+              ...makeSpecializationChoiceOptions('firearmsRifle', `${id}-rifle`, SKILL_SPECIALIZATION_OPTIONS.firearmsRifle),
+            ],
+            '☆',
+          ),
+          makeChoiceGroup(`${id}-social`, '社交技能 4选1', 1, makeSocialChoiceOptions(`${id}-social`), '☯'),
+        ],
+        freePickCount: 0,
+        allowAnySkill: false,
+      };
+    case 'medical':
+      return {
+        mandatoryRefs: [
+          makeSkillRef('firstAid', `${id}-firstAid`),
+          makeSkillRef('law', `${id}-law`),
+          makeSkillRef('listen', `${id}-listen`),
+          makeSkillRef('medicine', `${id}-medicine`),
+          makeSkillRef('psychology', `${id}-psychology`),
+          makeSkillRef('spotHidden', `${id}-spotHidden`),
+        ],
+        choiceGroups: [
+          makeChoiceGroup(
+            `${id}-science`,
+            `科学子类 ${SKILL_SPECIALIZATION_OPTIONS.science.length}选2`,
+            2,
+            makeSpecializationChoiceOptions('science', `${id}-science`, SKILL_SPECIALIZATION_OPTIONS.science),
+            '☆',
+          ),
+        ],
+        freePickCount: 0,
+        allowAnySkill: false,
+      };
+    case 'mythos':
+      return {
+        mandatoryRefs: [
+          makeSkillRef('cthulhuMythos', `${id}-cthulhuMythos`),
+        ],
+        choiceGroups: [],
+        freePickCount: 0,
+        allowAnySkill: false,
+      };
+    case 'custom':
+      return {
+        mandatoryRefs: [],
+        choiceGroups: [],
+        freePickCount: 0,
+        allowAnySkill: true,
+      };
+    default:
+      return {
+        ...parseOccupationPlan(skillText || ''),
+        allowAnySkill: false,
+      };
+  }
+}
+
+function parseExperiencePackPoints(raw, id) {
+  const value = String(raw || '').trim();
+  const numeric = normalizeInt(value);
+  if (numeric > 0) return { pointMode: 'fixed', points: numeric };
+  if (id === 'custom' || /自定义|自訂|自行|CM/i.test(value)) return { pointMode: 'manual', points: 0 };
+  return { pointMode: 'none', points: 0 };
+}
+
+function parseExperiencePackAgeMin(raw) {
+  const match = String(raw || '').match(/(?:>=|＞=|至少|不低于)\s*(\d{1,3})/);
+  return match ? normalizeInt(match[1]) : 0;
+}
+
 function normalizeOccupationPlan(plan) {
   if (!plan) return null;
   const mandatoryRefs = uniqBy(
@@ -143,6 +451,7 @@ function normalizeOccupationPlan(plan) {
     mandatoryRefs,
     choiceGroups,
     freePickCount: clamp(normalizeInt(plan.freePickCount), 0, 8),
+    allowAnySkill: Boolean(plan.allowAnySkill),
   };
 }
 
@@ -227,6 +536,24 @@ export function normalizeOccupation(raw) {
   const skillText = String(raw.skillText || "").trim();
   const aliasKeywords = inferOccupationKeywords(name);
   const plan = normalizeOccupationPlan(raw.plan) || parseOccupationPlan(skillText);
+
+  // P0-5.3: Consistency check between pre-parsed plan and skillText re-parse
+  if (raw.plan && skillText) {
+    const reParsed = parseOccupationPlan(skillText);
+    const planKeys = new Set([
+      ...plan.mandatoryRefs.flatMap((ref) => ref.keys || []),
+      ...plan.choiceGroups.flatMap((g) => g.options.flatMap((ref) => ref.keys || [])),
+    ]);
+    const reKeys = new Set([
+      ...reParsed.mandatoryRefs.flatMap((ref) => ref.keys || []),
+      ...reParsed.choiceGroups.flatMap((g) => g.options.flatMap((ref) => ref.keys || [])),
+    ]);
+    const diff = Math.abs(planKeys.size - reKeys.size);
+    if (diff > 2) {
+      console.warn(`[OccPlan] "${name}" plan(${planKeys.size}个技能key) vs skillText重解析(${reKeys.size}个) 差异 ${diff}，可能不同步`);
+    }
+  }
+
   const keySkillCount = new Set([
     ...plan.mandatoryRefs.flatMap((ref) => ref.keys || []),
     ...plan.choiceGroups.flatMap((g) => g.options.flatMap((ref) => ref.keys || [])),
@@ -253,6 +580,7 @@ export function makeInitialSkills() {
     ...def,
     occ: 0,
     interest: 0,
+    exp: 0,
     specialization: "",
     specializationChoice: "",
   }));
@@ -263,10 +591,11 @@ export function createInitialState() {
     stage: 0,
     basic: { name: "", age: 28, gender: "", occupation: "", era: "1920年代（经典）", birthplace: "", residence: "", archetype: "" },
     occupation: { selectedName: "", previewName: "", formula: "EDU*4", skillText: "", mandatoryRefs: [], choiceGroups: [], groupPicks: {}, freePickCount: 0, freePicks: [], creditRatingRange: null },
+    experience: { selectedId: "", selectedName: "", skillText: "", mandatoryRefs: [], choiceGroups: [], groupPicks: {}, allowAnySkill: false, pointMode: 'none', points: 0, manualPoints: 0, ageMin: 0, sanityLoss: "", notes: "" },
     attrs: { STR: 50, CON: 50, POW: 50, DEX: 50, APP: 50, SIZ: 50, INT: 50, EDU: 50, Luck: 50, HP: 10, MP: 10, SAN: 50, MOV: 8, DB: "0", Build: 0 },
-    pools: { occupation: 0, interest: 0, occSpent: 0, intSpent: 0 },
+    pools: { occupation: 0, interest: 0, experience: 0, occSpent: 0, intSpent: 0, expSpent: 0 },
     skills: makeInitialSkills(),
-    meta: { ageAdjustmentSnapshot: null, ageAdjustmentAppliedAge: null },
+    meta: { ageAdjustmentSnapshot: null, ageAdjustmentConfig: null, ageAdjustmentAppliedAge: null },
     background: {
       desc: "",
       belief: "",
@@ -326,6 +655,7 @@ function hydrateSkills(savedSkills) {
       ...skill,
       occ: Math.max(0, normalizeInt(saved.occ)),
       interest: Math.max(0, normalizeInt(saved.interest)),
+      exp: Math.max(0, normalizeInt(saved.exp)),
       specialization: String(saved.specialization || ''),
       specializationChoice: String(saved.specializationChoice || ''),
     };
@@ -353,10 +683,21 @@ function loadDraftState() {
         groupPicks: saved?.occupation?.groupPicks && typeof saved.occupation.groupPicks === 'object' ? saved.occupation.groupPicks : {},
         freePicks: Array.isArray(saved?.occupation?.freePicks) ? saved.occupation.freePicks : [],
       },
+      experience: {
+        ...base.experience,
+        ...(saved?.experience || {}),
+        mandatoryRefs: Array.isArray(saved?.experience?.mandatoryRefs) ? saved.experience.mandatoryRefs : [],
+        choiceGroups: Array.isArray(saved?.experience?.choiceGroups) ? saved.experience.choiceGroups : [],
+        groupPicks: saved?.experience?.groupPicks && typeof saved.experience.groupPicks === 'object' ? saved.experience.groupPicks : {},
+      },
       attrs: { ...base.attrs, ...(saved?.attrs || {}) },
       pools: { ...base.pools, ...(saved?.pools || {}) },
       meta: { ...base.meta, ...(saved?.meta || {}) },
-      background: { ...base.background, ...(saved?.background || {}) },
+      background: {
+        ...base.background,
+        ...(saved?.background || {}),
+        experiencePackId: String(saved?.background?.experiencePackId || saved?.experience?.selectedId || ''),
+      },
       skills: hydrateSkills(saved?.skills),
       selectedWeapons: sanitizeSelectedWeapons(saved?.selectedWeapons),
       occupationSearch: String(saved?.occupationSearch || ''),
@@ -378,14 +719,24 @@ function buildDraftSnapshot(state) {
       groupPicks: { ...(state.occupation.groupPicks || {}) },
       freePicks: [...(state.occupation.freePicks || [])],
     },
+    experience: {
+      ...state.experience,
+      mandatoryRefs: [...(state.experience.mandatoryRefs || [])],
+      choiceGroups: [...(state.experience.choiceGroups || [])],
+      groupPicks: { ...(state.experience.groupPicks || {}) },
+    },
     attrs: { ...state.attrs },
     pools: { ...state.pools },
     meta: { ...state.meta },
-    background: { ...state.background },
+    background: {
+      ...state.background,
+      experiencePackId: String(state.background.experiencePackId || state.experience.selectedId || ''),
+    },
     skills: state.skills.map((skill) => ({
       key: skill.key,
       occ: normalizeInt(skill.occ),
       interest: normalizeInt(skill.interest),
+      exp: normalizeInt(skill.exp),
       specialization: String(skill.specialization || ''),
       specializationChoice: String(skill.specializationChoice || ''),
     })),
@@ -409,13 +760,30 @@ function buildDraftSnapshot(state) {
   };
 }
 
+function buildDefaultSpecializationDetails() {
+  const details = {};
+  SKILL_DEFS.forEach((skill) => {
+    const options = SKILL_SPECIALIZATION_OPTIONS[skill.key];
+    if (!Array.isArray(options) || !options.length) return;
+    const defaults = Object.fromEntries(
+      options.map((label) => [label, normalizeInt(skill.base)]),
+    );
+    details[skill.key] = {
+      ...defaults,
+      ...(DEFAULT_SPECIALIZATION_BASE_OVERRIDES[skill.key] || {}),
+    };
+  });
+  return details;
+}
+
 export function useCoCLogic() {
   const state = reactive(loadDraftState());
   const runtime = reactive({
     occupations: FALLBACK_OCCUPATIONS_RAW.map(normalizeOccupation),
     weapons: [...FALLBACK_WEAPONS],
     specializationOptions: { ...SKILL_SPECIALIZATION_OPTIONS },
-    experiencePacks: [...FALLBACK_EXPERIENCE_PACKS],
+    specializationDetails: buildDefaultSpecializationDetails(),
+    experiencePacks: FALLBACK_EXPERIENCE_PACKS.map(normalizeExperiencePackRow).filter(Boolean),
     loadedFromWorkbook: false,
     occupationSource: "内置示例",
     weaponSource: "内置示例",
@@ -455,15 +823,7 @@ export function useCoCLogic() {
     { deep: true },
   );
 
-  async function loadJson(path) {
-    try {
-      const res = await fetch(path, { cache: "no-store" });
-      if (!res.ok) return null;
-      return await res.json();
-    } catch {
-      return null;
-    }
-  }
+
 
   function normalizeOccupationRow(row) {
     const name = String(row?.name || "").trim();
@@ -481,18 +841,33 @@ export function useCoCLogic() {
 
   function normalizeSpecializationRows(rows) {
     if (!rows || typeof rows !== 'object') return null;
-    const merged = { ...SKILL_SPECIALIZATION_OPTIONS };
+    const optionsByKey = { ...SKILL_SPECIALIZATION_OPTIONS };
+    const detailsByKey = buildDefaultSpecializationDetails();
     Object.entries(rows).forEach(([key, values]) => {
-      const options = Array.isArray(values)
-        ? values.map((item) => {
-          if (typeof item === 'string') return item;
-          return String(item?.label || "").trim();
-        }).filter(Boolean)
-        : [];
-      if (!options.length) return;
-      merged[key] = Array.from(new Set([...(merged[key] || []), ...options]));
+      const skill = SKILL_DEFS.find((item) => item.key === key);
+      const defaultBase = normalizeInt(skill?.base);
+      const existingOptions = new Set(optionsByKey[key] || []);
+      const existingDetails = { ...(detailsByKey[key] || {}) };
+      if (!Array.isArray(values)) return;
+
+      values.forEach((item) => {
+        const label = typeof item === 'string' ? String(item).trim() : String(item?.label || "").trim();
+        if (!label) return;
+        existingOptions.add(label);
+        const baseValue =
+          typeof item === 'string' || item?.base === undefined || item?.base === null || item?.base === ''
+            ? defaultBase
+            : normalizeInt(item.base);
+        existingDetails[label] = Number.isFinite(baseValue) ? baseValue : defaultBase;
+      });
+
+      optionsByKey[key] = Array.from(existingOptions);
+      detailsByKey[key] = existingDetails;
     });
-    return merged;
+    return {
+      optionsByKey,
+      detailsByKey,
+    };
   }
 
   function normalizeWeaponRow(row, index) {
@@ -520,25 +895,51 @@ export function useCoCLogic() {
   function normalizeExperiencePackRow(row, index) {
     const name = String(row?.name || row?.title || "").trim();
     if (!name) return null;
+    const id = String(row?.id || `pack-${index + 1}`);
+    const initialAge = String(row?.initialAge || row?.initial_age || row?.age || "").trim();
+    const skillGrowth = String(row?.skillGrowth || row?.skill_growth || row?.growth || "").trim();
+    const skills = String(row?.skills || row?.skillText || row?.skill_text || "").trim();
+    const plan = normalizeOccupationPlan(row?.plan || buildExperiencePackPlan(id, skills)) || {
+      mandatoryRefs: [],
+      choiceGroups: [],
+      freePickCount: 0,
+      allowAnySkill: false,
+    };
+    const pointConfig = parseExperiencePackPoints(skillGrowth, id);
     return {
-      id: String(row?.id || `pack-${index + 1}`),
+      id,
       name,
       sanityLoss: String(row?.sanityLoss || row?.sanity_loss || row?.sanity || "").trim(),
-      initialAge: String(row?.initialAge || row?.initial_age || row?.age || "").trim(),
-      skillGrowth: String(row?.skillGrowth || row?.skill_growth || row?.growth || "").trim(),
+      initialAge,
+      ageMin: parseExperiencePackAgeMin(initialAge),
+      skillGrowth,
+      pointMode: pointConfig.pointMode,
+      skillGrowthPoints: pointConfig.points,
       backgroundAdd: String(row?.backgroundAdd || row?.background_add || row?.background || "").trim(),
-      skills: String(row?.skills || row?.skillText || row?.skill_text || "").trim(),
+      skills,
+      skillText: skills,
+      plan,
+      allowAnySkill: Boolean(plan.allowAnySkill),
       notes: String(row?.notes || row?.remark || row?.note || "").trim(),
     };
   }
 
   async function initRuntimeData() {
-    const [occupationRows, weaponRows, specializationRows, experiencePackRows] = await Promise.all([
-      loadJson("/data/occupations.from_excel.json"),
-      loadJson("/data/weapons.from_excel.json"),
-      loadJson("/data/skill-specializations.from_excel.json"),
-      loadJson("/data/experience-packs.from_excel.json"),
-    ]);
+    let occupationRows, weaponRows, specializationRows, experiencePackRows;
+    try {
+      const [occMod, weapMod, specMod, expMod] = await Promise.all([
+        import('../../data/occupations.from_excel.json'),
+        import('../../data/weapons.from_excel.json'),
+        import('../../data/skill-specializations.from_excel.json'),
+        import('../../data/experience-packs.from_excel.json')
+      ]);
+      occupationRows = occMod.default || occMod;
+      weaponRows = weapMod.default || weapMod;
+      specializationRows = specMod.default || specMod;
+      experiencePackRows = expMod.default || expMod;
+    } catch (err) {
+      console.error("动态加载 JSON 数据块失败", err);
+    }
 
     if (Array.isArray(occupationRows) && occupationRows.length) {
       const parsed = occupationRows.map(normalizeOccupationRow).filter(Boolean);
@@ -558,9 +959,10 @@ export function useCoCLogic() {
       }
     }
 
-    const specializationOptions = normalizeSpecializationRows(specializationRows);
-    if (specializationOptions) {
-      runtime.specializationOptions = specializationOptions;
+    const specializationCatalog = normalizeSpecializationRows(specializationRows || {});
+    if (specializationCatalog) {
+      runtime.specializationOptions = specializationCatalog.optionsByKey;
+      runtime.specializationDetails = specializationCatalog.detailsByKey;
       runtime.loadedFromWorkbook = true;
     }
 
@@ -575,9 +977,15 @@ export function useCoCLogic() {
 
     if (state.occupation.selectedName) {
       const occ = methods.getOccupationByName(state.occupation.selectedName);
-      if (occ) methods.applyOccupationToState(occ, false);
+      if (occ) methods.applyOccupationToState(occ, false, { preserveSelections: true });
     } else if (runtime.occupations.length) {
       state.occupation.previewName = runtime.occupations[0].name;
+    }
+
+    const selectedExperiencePackId = state.background.experiencePackId || state.experience.selectedId;
+    if (selectedExperiencePackId) {
+      const pack = methods.getExperiencePackById(selectedExperiencePackId);
+      if (pack) methods.applyExperiencePackToState(pack, { preserveSelections: true });
     }
   }
 

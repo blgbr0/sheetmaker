@@ -13,7 +13,14 @@ export const AGE_PROFILES = [
     educationChecks: 0,
     appPenalty: 0,
     physicalPenalty: 5,
-    attrDeltas: null,
+    autoPenalty: {
+      EDU: 5,
+    },
+    manualPenalty: {
+      total: 5,
+      keys: ['STR', 'SIZ'],
+    },
+    luckRerolls: 2,
   },
   {
     min: 20,
@@ -26,13 +33,9 @@ export const AGE_PROFILES = [
     educationChecks: 0,
     appPenalty: 0,
     physicalPenalty: 0,
-    attrDeltas: {
-      STR: 0,
-      CON: 0,
-      DEX: 0,
-      APP: 0,
-      EDU: 0,
-    },
+    autoPenalty: {},
+    manualPenalty: null,
+    luckRerolls: 0,
   },
   {
     min: 40,
@@ -45,13 +48,14 @@ export const AGE_PROFILES = [
     educationChecks: 1,
     appPenalty: 5,
     physicalPenalty: 5,
-    attrDeltas: {
-      STR: 2,
-      CON: 2,
-      DEX: 1,
+    autoPenalty: {
       APP: 5,
-      EDU: 0,
     },
+    manualPenalty: {
+      total: 5,
+      keys: ['STR', 'CON', 'DEX'],
+    },
+    luckRerolls: 0,
   },
   {
     min: 50,
@@ -64,13 +68,14 @@ export const AGE_PROFILES = [
     educationChecks: 2,
     appPenalty: 10,
     physicalPenalty: 10,
-    attrDeltas: {
-      STR: 4,
-      CON: 3,
-      DEX: 3,
+    autoPenalty: {
       APP: 10,
-      EDU: 0,
     },
+    manualPenalty: {
+      total: 10,
+      keys: ['STR', 'CON', 'DEX'],
+    },
+    luckRerolls: 0,
   },
   {
     min: 60,
@@ -83,13 +88,14 @@ export const AGE_PROFILES = [
     educationChecks: 3,
     appPenalty: 15,
     physicalPenalty: 20,
-    attrDeltas: {
-      STR: 7,
-      CON: 7,
-      DEX: 6,
+    autoPenalty: {
       APP: 15,
-      EDU: 0,
     },
+    manualPenalty: {
+      total: 20,
+      keys: ['STR', 'CON', 'DEX'],
+    },
+    luckRerolls: 0,
   },
   {
     min: 70,
@@ -102,13 +108,14 @@ export const AGE_PROFILES = [
     educationChecks: 4,
     appPenalty: 20,
     physicalPenalty: 40,
-    attrDeltas: {
-      STR: 14,
-      CON: 13,
-      DEX: 13,
+    autoPenalty: {
       APP: 20,
-      EDU: 0,
     },
+    manualPenalty: {
+      total: 40,
+      keys: ['STR', 'CON', 'DEX'],
+    },
+    luckRerolls: 0,
   },
   {
     min: 80,
@@ -121,13 +128,14 @@ export const AGE_PROFILES = [
     educationChecks: 4,
     appPenalty: 25,
     physicalPenalty: 80,
-    attrDeltas: {
-      STR: 27,
-      CON: 27,
-      DEX: 26,
+    autoPenalty: {
       APP: 25,
-      EDU: 0,
     },
+    manualPenalty: {
+      total: 80,
+      keys: ['STR', 'CON', 'DEX'],
+    },
+    luckRerolls: 0,
   },
 ];
 
@@ -204,6 +212,15 @@ export const FALLBACK_EXPERIENCE_PACKS = [
   },
 ];
 
+export const SPENDING_LEVEL_TABLE = [
+  { min: 0, max: 0, level: '身无分文', spending: '$0.5/日', cash: '$0.50', assets: '无' },
+  { min: 1, max: 9, level: '贫困', spending: '$1-2/日', cash: (cr) => `$${cr}`, assets: (cr) => `$${cr * 10}` },
+  { min: 10, max: 49, level: '平均', spending: '$5-10/日', cash: (cr) => `$${cr * 2}`, assets: (cr) => `$${cr * 50}` },
+  { min: 50, max: 89, level: '富裕', spending: '$50-100/日', cash: (cr) => `$${cr * 5}`, assets: (cr) => `$${cr * 500}` },
+  { min: 90, max: 98, level: '豪富', spending: '$250+/日', cash: (cr) => `$${cr * 20}`, assets: (cr) => `$${cr * 2000}` },
+  { min: 99, max: 99, level: '超级富豪', spending: '无上限', cash: '$50,000', assets: '$5,000,000+' },
+];
+
 export function getAgeProfile(age) {
   const n = Number.parseInt(age, 10);
   const safeAge = Number.isFinite(n) ? n : 0;
@@ -219,8 +236,9 @@ export function getAgeProfile(age) {
       educationChecks: 0,
       appPenalty: 0,
       physicalPenalty: 0,
-      attrDeltas: null,
+      autoPenalty: {},
+      manualPenalty: null,
+      luckRerolls: 0,
     }
   );
 }
-

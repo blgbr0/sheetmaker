@@ -101,7 +101,23 @@ function createInlineStringNode(doc, value) {
 }
 
 function serializeXml(doc) {
-  const serialized = new XMLSerializer().serializeToString(doc);
+  let serialized = new XMLSerializer().serializeToString(doc);
+  // Fix for @xmldom/xmldom redundant namespace injection
+  // It often adds xmlns="uri" to every child node if createElementNS is used in certain ways.
+  const nameSpace = doc.documentElement?.namespaceURI;
+  if (nameSpace) {
+    // Remove all xmlns declarations that are identical to the root namespace, 
+    // EXCEPT for the very first one on the root element.
+    const pattern = new RegExp(` xmlns="${nameSpace}"`, 'g');
+    let first = true;
+    serialized = serialized.replace(pattern, (match) => {
+      if (first) {
+        first = false;
+        return match;
+      }
+      return "";
+    });
+  }
   if (serialized.startsWith("<?xml")) return serialized;
   return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n${serialized}`;
 }

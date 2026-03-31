@@ -1,9 +1,12 @@
 <template>
   <div class="app-container">
+    <div class="creepy-vignette"></div>
+    
     <header class="app-header">
-      <h1 class="stamp">调查员档案</h1>
-      <p class="app-subtitle">CoC7 车卡器 · 面向手机的顺滑流程</p>
-      <div class="stage-pills">
+      <h1 class="stamp glitch-hover">绝密档案 / CLASSIFIED</h1>
+      <p class="typewriter top-secret">Miskatonic University Dept. of Anomalous Affairs</p>
+      
+      <div class="stage-pills mt-4">
         <button 
           v-for="(s, i) in STAGES" 
           :key="i"
@@ -16,13 +19,9 @@
     
     <main class="app-main">
       <VintagePaper>
-        <div class="paper-head">
-          <div>
-            <h2>{{ STAGES[state.stage].title }}</h2>
-            <p class="muted">{{ STAGES[state.stage].goal }}</p>
-          </div>
-          <div class="stage-mark">{{ STAGES[state.stage].label }}</div>
-        </div>
+        <div class="paper-clip"></div>
+        <h2 class="section-title typewriter glitch-hover">{{ STAGES[state.stage].title }}</h2>
+        <p class="muted instruction-text">{{ STAGES[state.stage].goal }}</p>
 
         <Transition name="fade" mode="out-in">
           <Stage0Identity v-if="state.stage === 0" />
@@ -35,14 +34,14 @@
     </main>
 
     <footer class="app-footer">
-      <button class="btn-vintage" @click="prevStage" :disabled="state.stage === 0">◀ 上一步</button>
-      <button class="btn-vintage primary" @click="nextStage" :disabled="state.stage === STAGES.length - 1">下一步 ▶</button>
+      <button class="btn-vintage" @click="prevStage" :disabled="state.stage === 0">◀ 返回上一卷</button>
+      <button class="btn-vintage primary" @click="nextStage" :disabled="state.stage === STAGES.length - 1">继续阅览 ▶</button>
     </footer>
   </div>
 </template>
 
 <script setup>
-import { provide, onMounted } from 'vue';
+import { provide } from 'vue';
 import { useCoCLogic } from './composables/useCoCLogic.js';
 import { STAGES } from './composables/constants.js';
 import VintagePaper from './components/common/VintagePaper.vue';
@@ -57,10 +56,6 @@ const { state } = coc;
 
 provide('coc', coc);
 
-onMounted(() => {
-  coc.initRuntimeData();
-});
-
 function gotoStage(i) {
   state.stage = i;
 }
@@ -70,122 +65,109 @@ function prevStage() {
 }
 
 function nextStage() {
-  if (state.stage === 2) {
-    const warnings = coc.getSkillRuleWarnings();
-    if (warnings.hasWarnings) {
-      const lines = [...warnings.summary];
-      Object.entries(warnings.bySkill)
-        .slice(0, 6)
-        .forEach(([skillKey, issues]) => {
-          const skillName = state.skills.find((s) => s.key === skillKey)?.name || skillKey;
-          lines.push(`${skillName}: ${issues.join("；")}`);
-        });
-      const detailText = lines.length ? `\n- ${lines.join("\n- ")}` : "";
-      alert(`检测到规则提醒（不会阻止你继续）：${detailText}`);
-    }
-  }
-  if (state.stage === 3 && !state.background.keyLinkType) {
-    alert("提醒：你还没有选择“关键链接”，建议补充后再导出（不会阻止继续）。");
-  }
   if (state.stage < STAGES.length - 1) state.stage++;
 }
 </script>
 
 <style scoped>
 .app-container {
-  max-width: 980px;
+  max-width: 850px;
   margin: 0 auto;
-  padding: 16px;
+  padding: 24px 16px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 2;
 }
+.creepy-vignette {
+  position: fixed; inset: 0; pointer-events: none; z-index: 1000;
+  box-shadow: inset 0 0 150px rgba(0,0,0,0.9);
+}
+
 .app-header {
   text-align: center;
-  margin-bottom: 18px;
+  margin-bottom: 32px;
+  position: relative;
 }
 .app-header h1 {
-  font-size: clamp(2.2rem, 4vw, 3.4rem);
+  font-size: 2.8rem;
   margin-bottom: 8px;
+  transform: rotate(-2deg);
 }
-.app-subtitle {
-  color: var(--text-muted);
-  margin-bottom: 16px;
-  letter-spacing: 0.08em;
+.top-secret {
+  color: var(--accent-red);
+  font-weight: bold;
+  letter-spacing: 2px;
+  border-bottom: 1px solid var(--accent-red);
+  display: inline-block;
+  padding-bottom: 4px;
+  opacity: 0.8;
 }
+
 .stage-pills {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 12px;
   justify-content: center;
+  margin-top: 24px;
 }
 .pill {
-  background: rgba(255,255,255,0.45);
+  background: rgba(26, 22, 20, 0.05);
   border: 1px solid var(--border-color);
   color: var(--text-color);
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-family: var(--font-body);
-  font-size: 0.9rem;
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-family: var(--font-typewriter);
+  font-weight: bold;
+  font-size: 0.95rem;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.2s;
+  box-shadow: 2px 2px 0 var(--border-color);
+}
+.pill:hover {
+  background: rgba(26, 22, 20, 0.1);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--text-muted);
 }
 .pill.active {
-  background: linear-gradient(180deg, var(--accent-red), #6f0000);
-  color: #fff8ee;
-  border-color: rgba(111, 0, 0, 0.8);
-  box-shadow: 0 8px 20px rgba(139, 0, 0, 0.18);
-}
-.app-main {
-  flex: 1;
-}
-.app-footer {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 24px;
-  padding-bottom: 24px;
-  gap: 12px;
-}
-.muted {
-  color: var(--text-muted);
-  font-style: italic;
-  margin-bottom: 16px;
-}
-.paper-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-.paper-head h2 {
-  margin-bottom: 4px;
-}
-.stage-mark {
-  white-space: nowrap;
-  font-size: 0.78rem;
-  padding: 6px 10px;
-  border-radius: 999px;
-  border: 1px solid rgba(139, 0, 0, 0.18);
-  color: var(--accent-red);
-  background: rgba(139, 0, 0, 0.05);
-}
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.3s;
-}
-.fade-enter-from, .fade-leave-to {
-  opacity: 0;
+  background: var(--text-color);
+  color: var(--bg-color);
+  box-shadow: inset 2px 2px 4px rgba(0,0,0,0.5);
+  border-color: var(--text-color);
+  transform: translate(1px, 1px);
 }
 
-@media (max-width: 680px) {
-  .app-container {
-    padding: 12px;
-  }
-  .paper-head {
-    flex-direction: column;
-  }
-  .app-footer {
-    flex-direction: column;
-  }
+.app-main { flex: 1; position: relative; }
+
+.paper-clip {
+  position: absolute; top: -15px; left: 40px;
+  width: 14px; height: 50px;
+  border: 3px solid #7c858e; border-radius: 10px;
+  background: transparent;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  z-index: 20; transform: rotate(8deg);
 }
+.paper-clip::after {
+  content: ''; position: absolute;
+  top: 5px; left: 2px; width: 4px; height: 35px;
+  border: 3px solid #7c858e; border-radius: 10px; border-top: none;
+}
+
+.section-title {
+  font-size: 2rem; border-bottom: 2px solid var(--text-color);
+  padding-bottom: 8px; margin-bottom: 8px; display: inline-block;
+}
+.instruction-text {
+  font-family: var(--font-handwriting); font-size: 1.3rem; color: var(--accent-blue);
+  opacity: 0.8; margin-bottom: 24px; max-width: 80%;
+}
+
+.app-footer {
+  display: flex; justify-content: space-between; margin-top: 24px; padding-bottom: 40px;
+}
+
+.mt-4 { margin-top: 24px; }
+.fade-enter-active, .fade-leave-active { transition: opacity 0.4s ease, filter 0.4s; }
+.fade-enter-from, .fade-leave-to { opacity: 0; filter: blur(4px); }
 </style>

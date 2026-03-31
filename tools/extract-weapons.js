@@ -41,6 +41,29 @@ function isInvalidWeaponRow(name, skill, damage) {
   return false;
 }
 
+function getMergeRanges(sheet) {
+  const merges = sheet['!merges'] || [];
+  return merges.map((m) => ({
+    startRow: m.s.r,
+    endRow: m.e.r,
+    startCol: m.s.c,
+    endCol: m.e.c,
+  }));
+}
+
+function buildMergedColumnMap(rows, colIndex, mergeRanges) {
+  const map = new Map();
+  const colMerges = mergeRanges.filter((m) => m.startCol <= colIndex && m.endCol >= colIndex);
+  for (const m of colMerges) {
+    const value = String((rows[m.startRow] || [])[colIndex] || '').trim();
+    if (!value) continue;
+    for (let r = m.startRow; r <= m.endRow; r++) {
+      map.set(r, value);
+    }
+  }
+  return map;
+}
+
 function main() {
   const input = resolveInputWorkbook();
   const workbook = XLSX.readFile(input, { raw: false, cellText: true, cellFormula: true });
@@ -49,6 +72,13 @@ function main() {
   if (!sheet) throw new Error("未找到武器列表工作表");
 
   const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, raw: false, defval: "" });
+  const mergeRanges = getMergeRanges(sheet);
+
+  const typeColIndex = 11;
+  const notesColIndex = 12;
+  const typeMergeMap = buildMergedColumnMap(rows, typeColIndex, mergeRanges);
+  const notesMergeMap = buildMergedColumnMap(rows, notesColIndex, mergeRanges);
+
   const weapons = [];
 
   for (let i = 0; i < rows.length; i += 1) {
@@ -63,9 +93,8 @@ function main() {
     const malfunction = String(row[8] || "").trim();
     const era = String(row[9] || "").trim();
     const price = String(row[10] || "").trim();
-    const invented = String(row[11] || "").trim();
-    const type = String(row[12] || "").trim();
-    const notes = String(row[13] || "").trim();
+    const type = typeMergeMap.get(i) || String(row[typeColIndex] || "").trim();
+    const notes = notesMergeMap.get(i) || String(row[notesColIndex] || "").trim();
 
     if (isInvalidWeaponRow(parsedName.name, skill, damage)) continue;
 
@@ -86,7 +115,6 @@ function main() {
       malfunction,
       era,
       price,
-      invented,
       type,
       notes,
     });
